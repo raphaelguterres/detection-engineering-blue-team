@@ -1,5 +1,5 @@
 <group name="local,windows,attack,">
-  <rule id="100100" level="12">
+  <rule id="110100" level="12">
     <if_group>sysmon_event1</if_group>
     <field name="win.eventdata.image" type="pcre2">(?i)\\(powershell|pwsh)\.exe$</field>
     <field name="win.eventdata.commandLine" type="pcre2">(?i)(?:^|\s)-(?:enc|encodedcommand)\s+</field>

@@ -14,7 +14,7 @@ schtasks.exe /create /tn DetectionEngineeringDemo /sc once /st 23:59 /tr "cmd.ex
 
 ## Resultado esperado
 
-O Event ID 1 de `schtasks.exe` contém `/create` e deve gerar o rule ID `100120`.
+O Event ID 1 de `schtasks.exe` contém `/create` e deve gerar o rule ID `110120`.
 
 ## Limpeza
 

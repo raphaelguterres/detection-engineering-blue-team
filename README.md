@@ -51,7 +51,7 @@ O gate valida IDs únicos, campos mínimos de qualidade, arquivos referenciados,
 
 ## Convenções
 
-- IDs locais: `100100–100199`.
+- IDs deste projeto: `110100–110199` (separados das regras do laboratório).
 - Todo item do catálogo exige técnica ATT&CK, severidade, fonte de dados, evidência, owner e rollback.
 - Toda regra exige ao menos um caso de detecção e um caso benigno que **não** deve alertar.
 - Não inclua credenciais, malware, payloads ofensivos ou telemetria real de clientes.

@@ -1,5 +1,5 @@
 <group name="local,windows,attack,">
-  <rule id="100110" level="10">
+  <rule id="110110" level="10">
     <if_group>sysmon_event1</if_group>
     <field name="win.eventdata.image" type="pcre2">(?i)\\rundll32\.exe$</field>
     <field name="win.eventdata.commandLine" type="pcre2">(?i)\\(?:users|programdata|temp|appdata)\\</field>

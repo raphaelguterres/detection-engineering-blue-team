@@ -10,5 +10,5 @@ O caso positivo em `tests/fixtures/net-user-add.json` representa o Event ID 1 es
 
 ## Resultado esperado
 
-Um processo `net.exe` com `user <nome> /add` deve gerar o rule ID `100140`.
+Um processo `net.exe` com `user <nome> /add` deve gerar o rule ID `110140`.
 

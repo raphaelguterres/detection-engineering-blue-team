@@ -4,7 +4,7 @@
   "validations": [
     {
       "detection_id": "DET-WIN-PS-ENC-001",
-      "rule_id": 100100,
+      "rule_id": 110100,
       "hypothesis": "A benign PowerShell command started with -EncodedCommand generates a high-severity alert.",
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
@@ -12,7 +12,7 @@
         "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
       },
       "wazuh_evidence": {
-        "rule_id": 100100,
+        "rule_id": 110100,
         "mitre": "T1059.001",
         "capture": "timestamp, agent identifier sanitized, rule description"
       },
@@ -20,7 +20,7 @@
     },
     {
       "detection_id": "DET-WIN-RUNDLL32-001",
-      "rule_id": 100110,
+      "rule_id": 110110,
       "hypothesis": "A rundll32 process referencing a user-writable path is surfaced for investigation.",
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
@@ -28,7 +28,7 @@
         "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
       },
       "wazuh_evidence": {
-        "rule_id": 100110,
+        "rule_id": 110110,
         "mitre": "T1218.011",
         "capture": "timestamp, agent identifier sanitized, rule description"
       },
@@ -36,7 +36,7 @@
     },
     {
       "detection_id": "DET-WIN-SCHTASKS-001",
-      "rule_id": 100120,
+      "rule_id": 110120,
       "hypothesis": "Creating a disposable scheduled task generates a medium-severity alert.",
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
@@ -44,7 +44,7 @@
         "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
       },
       "wazuh_evidence": {
-        "rule_id": 100120,
+        "rule_id": 110120,
         "mitre": "T1053.005",
         "capture": "timestamp, agent identifier sanitized, rule description"
       },
@@ -52,7 +52,7 @@
     },
     {
       "detection_id": "DET-WIN-RUNKEY-001",
-      "rule_id": 100130,
+      "rule_id": 110130,
       "hypothesis": "Adding a disposable HKCU Run value generates a high-severity alert.",
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
@@ -60,7 +60,7 @@
         "fields": ["win.eventdata.targetObject"]
       },
       "wazuh_evidence": {
-        "rule_id": 100130,
+        "rule_id": 110130,
         "mitre": "T1547.001",
         "capture": "timestamp, agent identifier sanitized, rule description"
       },
@@ -68,7 +68,7 @@
     },
     {
       "detection_id": "DET-WIN-LOCALACCOUNT-001",
-      "rule_id": 100140,
+      "rule_id": 110140,
       "hypothesis": "A simulated net user account creation event generates a high-severity alert.",
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
@@ -76,7 +76,7 @@
         "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
       },
       "wazuh_evidence": {
-        "rule_id": 100140,
+        "rule_id": 110140,
         "mitre": "T1136.001",
         "capture": "timestamp, agent identifier sanitized, rule description"
       },

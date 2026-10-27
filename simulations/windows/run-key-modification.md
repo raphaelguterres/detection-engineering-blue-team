@@ -14,7 +14,7 @@ New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Na
 
 ## Resultado esperado
 
-O evento de alteração de registro deve conter a chave `Run` e gerar o rule ID `100130`.
+O evento de alteração de registro deve conter a chave `Run` e gerar o rule ID `110130`.
 
 ## Limpeza
 

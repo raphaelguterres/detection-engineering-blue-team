@@ -1,5 +1,5 @@
 {
-  "rule_id": 100140,
+  "rule_id": 110140,
   "cases": [
     {
       "name": "detects_net_user_add",

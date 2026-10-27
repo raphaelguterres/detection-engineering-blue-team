@@ -10,7 +10,7 @@ Este cenário é validado no pipeline pelos eventos sintéticos em `tests/fixtur
 
 ## Resultado esperado
 
-Um Event ID 1 cujo processo seja `rundll32.exe` e contenha caminho sob `Users`, `ProgramData`, `Temp` ou `AppData` deve gerar o rule ID `100110`.
+Um Event ID 1 cujo processo seja `rundll32.exe` e contenha caminho sob `Users`, `ProgramData`, `Temp` ou `AppData` deve gerar o rule ID `110110`.
 
 ## Limpeza e rollback
 

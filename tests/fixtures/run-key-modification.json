@@ -1,5 +1,5 @@
 {
-  "rule_id": 100130,
+  "rule_id": 110130,
   "cases": [
     {
       "name": "detects_current_user_run_key",

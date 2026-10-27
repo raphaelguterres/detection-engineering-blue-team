@@ -8,7 +8,7 @@ Produzir telemetria de criação de processo para validar `DET-WIN-PS-ENC-001` s
 
 - Host Windows isolado ou autorizado.
 - Sysmon com Event ID 1 encaminhado ao Wazuh.
-- Regra `100100` carregada no Wazuh manager.
+- Regra `110100` carregada no Wazuh manager.
 
 ## Execução
 
@@ -23,7 +23,7 @@ powershell.exe -NoProfile -EncodedCommand $value
 
 - Sysmon registra Event ID 1 para `powershell.exe`.
 - O comando contém `-EncodedCommand`.
-- Wazuh gera alerta com rule ID `100100` e técnica `T1059.001`.
+- Wazuh gera alerta com rule ID `110100` e técnica `T1059.001`.
 
 ## Limpeza e rollback
 

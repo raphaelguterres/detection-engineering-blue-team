@@ -1,5 +1,5 @@
 <group name="local,windows,attack,">
-  <rule id="100140" level="12">
+  <rule id="110140" level="12">
     <if_group>sysmon_event1</if_group>
     <field name="win.eventdata.image" type="pcre2">(?i)\\net(?:1)?\.exe$</field>
     <field name="win.eventdata.commandLine" type="pcre2">(?i)(?:^|\s)user\s+\S+.*(?:\s|/)/add(?:\s|$)</field>

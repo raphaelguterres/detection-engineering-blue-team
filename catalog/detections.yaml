@@ -3,7 +3,7 @@ detections:
   - id: DET-WIN-PS-ENC-001
     title: PowerShell com comando codificado
     status: production
-    rule_id: 100100
+    rule_id: 110100
     platform: windows
     tactic: execution
     technique: T1059.001
@@ -12,7 +12,7 @@ detections:
     data_sources:
       - Sysmon Event ID 1
       - Windows process creation telemetry
-    rule_file: rules/windows/100100-powershell-encoded-command.xml
+    rule_file: rules/windows/110100-powershell-encoded-command.xml
     tests_file: tests/fixtures/powershell-encoded-command.json
     simulation: simulations/windows/powershell-encoded-command.md
     evidence:
@@ -24,14 +24,14 @@ detections:
     tuning:
       - allowlist signed, documented automation only after validating parent process and account
     rollback:
-      - remove 100100-powershell-encoded-command.xml from the Wazuh local rules directory
+      - remove 110100-powershell-encoded-command.xml from the Wazuh local rules directory
       - restart the Wazuh manager and validate rule loading
     owner: blue-team
 
   - id: DET-WIN-RUNDLL32-001
     title: Rundll32 executando DLL de diretório gravável pelo usuário
     status: production
-    rule_id: 100110
+    rule_id: 110110
     platform: windows
     tactic: defense-evasion
     technique: T1218.011
@@ -40,7 +40,7 @@ detections:
     data_sources:
       - Sysmon Event ID 1
       - Windows process creation telemetry
-    rule_file: rules/windows/100110-rundll32-user-writable-path.xml
+    rule_file: rules/windows/110110-rundll32-user-writable-path.xml
     tests_file: tests/fixtures/rundll32-user-writable-path.json
     simulation: simulations/windows/rundll32-user-writable-path.md
     evidence:
@@ -51,14 +51,14 @@ detections:
     tuning:
       - scope exclusions to known signed product paths with change-control evidence
     rollback:
-      - remove 100110-rundll32-user-writable-path.xml from the Wazuh local rules directory
+      - remove 110110-rundll32-user-writable-path.xml from the Wazuh local rules directory
       - restart the Wazuh manager and validate rule loading
     owner: blue-team
 
   - id: DET-WIN-SCHTASKS-001
     title: Criação de tarefa agendada via schtasks
     status: production
-    rule_id: 100120
+    rule_id: 110120
     platform: windows
     tactic: persistence
     technique: T1053.005
@@ -67,7 +67,7 @@ detections:
     data_sources:
       - Sysmon Event ID 1
       - Windows process creation telemetry
-    rule_file: rules/windows/100120-schtasks-create.xml
+    rule_file: rules/windows/110120-schtasks-create.xml
     tests_file: tests/fixtures/schtasks-create.json
     simulation: simulations/windows/schtasks-create.md
     evidence:
@@ -79,14 +79,14 @@ detections:
     tuning:
       - baseline approved task names, creators and action paths before excluding them
     rollback:
-      - remove 100120-schtasks-create.xml from the Wazuh local rules directory
+      - remove 110120-schtasks-create.xml from the Wazuh local rules directory
       - restart the Wazuh manager and validate rule loading
     owner: blue-team
 
   - id: DET-WIN-RUNKEY-001
     title: Modificação de Run Key de inicialização
     status: production
-    rule_id: 100130
+    rule_id: 110130
     platform: windows
     tactic: persistence
     technique: T1547.001
@@ -95,7 +95,7 @@ detections:
     data_sources:
       - Sysmon Event ID 13
       - Windows registry telemetry
-    rule_file: rules/windows/100130-run-key-modification.xml
+    rule_file: rules/windows/110130-run-key-modification.xml
     tests_file: tests/fixtures/run-key-modification.json
     simulation: simulations/windows/run-key-modification.md
     evidence:
@@ -107,14 +107,14 @@ detections:
     tuning:
       - validate signer, target path and deployment record before creating exceptions
     rollback:
-      - remove 100130-run-key-modification.xml from the Wazuh local rules directory
+      - remove 110130-run-key-modification.xml from the Wazuh local rules directory
       - restart the Wazuh manager and validate rule loading
     owner: blue-team
 
   - id: DET-WIN-LOCALACCOUNT-001
     title: Criação de conta local via net.exe
     status: production
-    rule_id: 100140
+    rule_id: 110140
     platform: windows
     tactic: persistence
     technique: T1136.001
@@ -123,7 +123,7 @@ detections:
     data_sources:
       - Sysmon Event ID 1
       - Windows process creation telemetry
-    rule_file: rules/windows/100140-net-user-add.xml
+    rule_file: rules/windows/110140-net-user-add.xml
     tests_file: tests/fixtures/net-user-add.json
     simulation: simulations/windows/net-user-add.md
     evidence:
@@ -134,7 +134,7 @@ detections:
     tuning:
       - correlate with change ticket, approved administrator and account lifecycle record
     rollback:
-      - remove 100140-net-user-add.xml from the Wazuh local rules directory
+      - remove 110140-net-user-add.xml from the Wazuh local rules directory
       - restart the Wazuh manager and validate rule loading
     owner: blue-team
 

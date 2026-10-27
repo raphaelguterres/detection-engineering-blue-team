@@ -1,5 +1,5 @@
 {
-  "rule_id": 100110,
+  "rule_id": 110110,
   "cases": [
     {
       "name": "detects_user_profile_dll",

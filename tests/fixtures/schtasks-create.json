@@ -1,5 +1,5 @@
 {
-  "rule_id": 100120,
+  "rule_id": 110120,
   "cases": [
     {
       "name": "detects_schtasks_create",

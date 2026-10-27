@@ -1,5 +1,5 @@
 {
-  "rule_id": 100100,
+  "rule_id": 110100,
   "cases": [
     {
       "name": "detects_encoded_command",
