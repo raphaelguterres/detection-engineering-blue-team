@@ -1,0 +1,13 @@
+<group name="local,windows,attack,">
+  <rule id="100100" level="12">
+    <if_group>sysmon_event1</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)\\(powershell|pwsh)\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(?:^|\s)-(?:enc|encodedcommand)\s+</field>
+    <description>PowerShell started with an encoded command</description>
+    <mitre>
+      <id>T1059.001</id>
+    </mitre>
+    <group>attack.execution,powershell,</group>
+  </rule>
+</group>
+

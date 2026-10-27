@@ -1,0 +1,26 @@
+{
+  "rule_id": 100100,
+  "cases": [
+    {
+      "name": "detects_encoded_command",
+      "expected_alert": true,
+      "event": {
+        "win.system.providerName": "Microsoft-Windows-Sysmon",
+        "win.system.eventID": "1",
+        "win.eventdata.image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "win.eventdata.commandLine": "powershell.exe -EncodedCommand VwByAGkAdABlAC0ASABvAHMAdAAgAG8AawA="
+      }
+    },
+    {
+      "name": "does_not_alert_on_standard_administration",
+      "expected_alert": false,
+      "event": {
+        "win.system.providerName": "Microsoft-Windows-Sysmon",
+        "win.system.eventID": "1",
+        "win.eventdata.image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "win.eventdata.commandLine": "powershell.exe -NoProfile -Command Get-Date"
+      }
+    }
+  ]
+}
+

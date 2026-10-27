@@ -1,0 +1,57 @@
+schema_version: 1
+detections:
+  - id: DET-WIN-PS-ENC-001
+    title: PowerShell com comando codificado
+    status: production
+    rule_id: 100100
+    platform: windows
+    tactic: execution
+    technique: T1059.001
+    technique_name: PowerShell
+    severity: high
+    data_sources:
+      - Sysmon Event ID 1
+      - Windows process creation telemetry
+    rule_file: rules/windows/100100-powershell-encoded-command.xml
+    tests_file: tests/fixtures/powershell-encoded-command.json
+    simulation: simulations/windows/powershell-encoded-command.md
+    evidence:
+      rationale: EncodedCommand is uncommon in interactive administration and merits investigation.
+      reference: https://attack.mitre.org/techniques/T1059/001/
+    false_positives:
+      - approved automation using encoded PowerShell
+      - software deployment tooling
+    tuning:
+      - allowlist signed, documented automation only after validating parent process and account
+    rollback:
+      - remove 100100-powershell-encoded-command.xml from the Wazuh local rules directory
+      - restart the Wazuh manager and validate rule loading
+    owner: blue-team
+
+  - id: DET-WIN-RUNDLL32-001
+    title: Rundll32 executando DLL de diretório gravável pelo usuário
+    status: production
+    rule_id: 100110
+    platform: windows
+    tactic: defense-evasion
+    technique: T1218.011
+    technique_name: Signed Binary Proxy Execution: Rundll32
+    severity: medium
+    data_sources:
+      - Sysmon Event ID 1
+      - Windows process creation telemetry
+    rule_file: rules/windows/100110-rundll32-user-writable-path.xml
+    tests_file: tests/fixtures/rundll32-user-writable-path.json
+    simulation: simulations/windows/rundll32-user-writable-path.md
+    evidence:
+      rationale: Rundll32 loading a DLL from user-writable paths can indicate proxy execution.
+      reference: https://attack.mitre.org/techniques/T1218/011/
+    false_positives:
+      - legacy line-of-business software installed under user profiles
+    tuning:
+      - scope exclusions to known signed product paths with change-control evidence
+    rollback:
+      - remove 100110-rundll32-user-writable-path.xml from the Wazuh local rules directory
+      - restart the Wazuh manager and validate rule loading
+    owner: blue-team
+
