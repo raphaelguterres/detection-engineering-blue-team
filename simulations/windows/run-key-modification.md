@@ -15,7 +15,7 @@ Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' 
 
 ## Resultado esperado
 
-O primeiro comando cria o valor temporário e o segundo o remove imediatamente. O evento de alteração de registro deve conter a chave `Run` e gerar o rule ID `110130`.
+O primeiro comando cria o valor temporário e o segundo o remove imediatamente. O Sysmon registra o Event ID 13, que deve conter a chave `Run` e gerar o rule ID `110130`.
 
 ## Limpeza
 
