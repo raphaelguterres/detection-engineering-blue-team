@@ -4,6 +4,10 @@ Repositório de **detection-as-code** focado em engenharia de detecção, separa
 
 > O laboratório que gera telemetria e este repositório são projetos complementares. Adicione aqui o link do projeto de lab: `TODO: link-do-lab`.
 
+![Arquitetura de detection-as-code](assets/detection-as-code-architecture.png)
+
+Leia a [arquitetura e o fluxo de promoção](docs/architecture.md) para entender os limites entre o laboratório, a telemetria, o Wazuh e este repositório.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;
