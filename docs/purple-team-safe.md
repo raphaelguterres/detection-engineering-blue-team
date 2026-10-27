@@ -13,7 +13,7 @@ flowchart LR
   R --> Q[Quality gate e revisão]
 ```
 
-Cada item do catálogo já possui uma simulação em `simulations/windows/`. A evolução agora é registrar cada execução em um artefato de evidência, sem enviar logs de clientes ou dados sensíveis ao Git.
+Cada item do catálogo já possui uma simulação em `simulations/windows/`. O arquivo [`tests/purple-validation-plan.json`](../tests/purple-validation-plan.json) estabelece o contrato mínimo de hipótese, telemetria, evidência Wazuh e limpeza por detecção; o quality gate exige cobertura completa desse plano. A execução gera um registro de evidência, sem enviar logs de clientes ou dados sensíveis ao Git.
 
 ## Contrato de validação
 

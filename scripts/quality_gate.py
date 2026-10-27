@@ -5,10 +5,10 @@ import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
-import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "catalog" / "detections.yaml"
+PURPLE_PLAN = ROOT / "tests" / "purple-validation-plan.json"
 REQUIRED = {"id", "title", "status", "rule_id", "technique", "severity", "rule_file", "tests_file", "simulation", "evidence", "false_positives", "tuning", "rollback", "owner"}
 
 
@@ -87,14 +87,25 @@ def main() -> int:
         except (json.JSONDecodeError, OSError, ValueError) as error:
             failures.append(f"{name}: invalid fixture: {error}")
 
-    dashboard = ROOT / "docs" / "dashboard.md"
-    matrix = ROOT / "reports" / "mitre-coverage.md"
-    dashboard_data = ROOT / "dashboard" / "data.js"
-    before = {path: path.read_bytes() if path.exists() else None for path in (dashboard, matrix, dashboard_data)}
-    subprocess.run([sys.executable, str(ROOT / "scripts" / "generate_dashboard.py")], check=True)
-    for path, original in before.items():
-        if original != path.read_bytes():
-            failures.append(f"generated report is stale: {path.relative_to(ROOT)} (run python scripts/generate_dashboard.py)")
+    try:
+        purple_plan = json.loads(PURPLE_PLAN.read_text(encoding="utf-8"))
+        records = purple_plan.get("validations", [])
+        planned_ids = {record.get("detection_id") for record in records}
+        catalog_ids = {entry.get("id") for entry in entries}
+        if planned_ids != catalog_ids:
+            failures.append("Purple Team plan must contain exactly one validation contract per detection")
+        required_purple = {"detection_id", "rule_id", "hypothesis", "expected_telemetry", "wazuh_evidence", "cleanup"}
+        for record in records:
+            missing = required_purple - record.keys()
+            if missing:
+                failures.append(f"Purple Team record {record.get('detection_id', '<unknown>')}: missing {', '.join(sorted(missing))}")
+            if not record.get("expected_telemetry") or not record.get("wazuh_evidence"):
+                failures.append(f"Purple Team record {record.get('detection_id', '<unknown>')}: telemetry and Wazuh evidence are required")
+            matching = next((entry for entry in entries if entry.get("id") == record.get("detection_id")), None)
+            if matching and record.get("rule_id") != int(matching.get("rule_id", 0)):
+                failures.append(f"Purple Team record {record.get('detection_id')}: rule ID does not match catalog")
+    except (json.JSONDecodeError, OSError) as error:
+        failures.append(f"invalid Purple Team validation plan: {error}")
 
     if failures:
         print("QUALITY GATE FAILED")

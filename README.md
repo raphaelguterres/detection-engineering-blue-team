@@ -10,9 +10,9 @@ Repositório de **detection-as-code** focado em engenharia de detecção, separa
 
 Leia a [arquitetura e o fluxo de promoção](docs/architecture.md) para entender os limites entre o laboratório, a telemetria, o Wazuh e este repositório.
 
-## Dashboard
+## Operação e cobertura
 
-Abra o [dashboard visual local](dashboard/index.html) para explorar o catálogo por severidade. O [dashboard em Markdown](docs/dashboard.md) e a [matriz de cobertura MITRE](reports/mitre-coverage.md) são gerados a partir do catálogo. O badge acima mostra o estado atual do pipeline de qualidade no GitHub Actions.
+O Wazuh é a fonte de verdade operacional para alertas, investigação e métricas ao vivo. Este repositório mantém o código, os testes e as evidências de engenharia que sustentam essa operação. O badge acima mostra o estado atual do pipeline de qualidade no GitHub Actions.
 
 ## Purple Team seguro
 
@@ -44,11 +44,10 @@ scripts/             validações sem dependências externas
 3. Execute os testes de contrato antes de promover uma alteração:
 
 ```powershell
-python scripts/generate_dashboard.py
 python scripts/quality_gate.py
 ```
 
-O gate valida IDs únicos, campos mínimos de qualidade, arquivos referenciados, XML bem-formado, cobertura MITRE e cenários positivos/negativos. Ele também impede que o dashboard e a matriz sejam publicados desatualizados. Isso não substitui a execução das regras em um manager Wazuh real; essa validação operacional está documentada em cada simulação.
+O gate valida IDs únicos, campos mínimos de qualidade, arquivos referenciados, XML bem-formado, cobertura MITRE, testes de regressão e contratos de validação Purple Team. Isso não substitui a execução das regras em um manager Wazuh real; essa validação operacional está documentada em cada simulação.
 
 ## Convenções
 

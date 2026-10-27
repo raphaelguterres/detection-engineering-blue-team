@@ -8,11 +8,11 @@ web
 
 ## Stack
 
-Static HTML, CSS and vanilla JavaScript generated from the detection catalog; no external runtime required.
+Markdown, XML, JSON e Python sem dependências externas.
 
 ## Users
 
-Blue team analysts and detection engineers who need to understand the state, coverage and validation evidence of their detection portfolio.
+Blue team analysts and detection engineers que precisam versionar, revisar e validar seu portfólio de detecções.
 
 ## Product Purpose
 
@@ -24,12 +24,12 @@ Each detection carries its engineering contract: ATT&CK mapping, quality metadat
 
 ## Operating Context
 
-The repository is reviewed through GitHub, CI and local Markdown/static dashboard files. Operational validations occur only in isolated, authorized virtual machines.
+The repository is reviewed through GitHub and CI. Operational monitoring and investigation occur in Wazuh; validations occur only in isolated, authorized virtual machines.
 
 ## Capabilities and Constraints
 
 - Rules target Wazuh and Windows telemetry.
-- Dashboard is retained inside the project for now; it is not published as a public site.
+- Wazuh remains the only operational dashboard; this repository does not duplicate it.
 - Purple Team exercises are benign, documented and must not include exploitation, malware, credential collection or persistence beyond disposable test artifacts.
 
 ## Evidence on Hand

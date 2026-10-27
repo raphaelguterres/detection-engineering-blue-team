@@ -1,0 +1,86 @@
+{
+  "scope": "safe-purple-team-validation",
+  "policy": "Execute only in authorized, isolated virtual machines. Store Wazuh evidence outside this repository after removing environment identifiers.",
+  "validations": [
+    {
+      "detection_id": "DET-WIN-PS-ENC-001",
+      "rule_id": 100100,
+      "hypothesis": "A benign PowerShell command started with -EncodedCommand generates a high-severity alert.",
+      "expected_telemetry": {
+        "source": "Microsoft-Windows-Sysmon",
+        "event_id": 1,
+        "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
+      },
+      "wazuh_evidence": {
+        "rule_id": 100100,
+        "mitre": "T1059.001",
+        "capture": "timestamp, agent identifier sanitized, rule description"
+      },
+      "cleanup": "No artifact is created; close the test shell after confirming the alert."
+    },
+    {
+      "detection_id": "DET-WIN-RUNDLL32-001",
+      "rule_id": 100110,
+      "hypothesis": "A rundll32 process referencing a user-writable path is surfaced for investigation.",
+      "expected_telemetry": {
+        "source": "Microsoft-Windows-Sysmon",
+        "event_id": 1,
+        "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
+      },
+      "wazuh_evidence": {
+        "rule_id": 100110,
+        "mitre": "T1218.011",
+        "capture": "timestamp, agent identifier sanitized, rule description"
+      },
+      "cleanup": "Use only the synthetic regression fixture unless an organization-approved signed test DLL exists; remove approved artifacts after testing."
+    },
+    {
+      "detection_id": "DET-WIN-SCHTASKS-001",
+      "rule_id": 100120,
+      "hypothesis": "Creating a disposable scheduled task generates a medium-severity alert.",
+      "expected_telemetry": {
+        "source": "Microsoft-Windows-Sysmon",
+        "event_id": 1,
+        "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
+      },
+      "wazuh_evidence": {
+        "rule_id": 100120,
+        "mitre": "T1053.005",
+        "capture": "timestamp, agent identifier sanitized, rule description"
+      },
+      "cleanup": "Delete the DetectionEngineeringDemo task with schtasks.exe /delete /tn DetectionEngineeringDemo /f."
+    },
+    {
+      "detection_id": "DET-WIN-RUNKEY-001",
+      "rule_id": 100130,
+      "hypothesis": "Adding a disposable HKCU Run value generates a high-severity alert.",
+      "expected_telemetry": {
+        "source": "Microsoft-Windows-Sysmon",
+        "event_id": 13,
+        "fields": ["win.eventdata.targetObject"]
+      },
+      "wazuh_evidence": {
+        "rule_id": 100130,
+        "mitre": "T1547.001",
+        "capture": "timestamp, agent identifier sanitized, rule description"
+      },
+      "cleanup": "Remove the DetectionEngineeringDemo value from HKCU Run immediately after validation."
+    },
+    {
+      "detection_id": "DET-WIN-LOCALACCOUNT-001",
+      "rule_id": 100140,
+      "hypothesis": "A simulated net user account creation event generates a high-severity alert.",
+      "expected_telemetry": {
+        "source": "Microsoft-Windows-Sysmon",
+        "event_id": 1,
+        "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
+      },
+      "wazuh_evidence": {
+        "rule_id": 100140,
+        "mitre": "T1136.001",
+        "capture": "timestamp, agent identifier sanitized, rule description"
+      },
+      "cleanup": "Fixture-only by default; if a formally approved lab account is used, remove it immediately and confirm removal."
+    }
+  ]
+}
