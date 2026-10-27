@@ -5,6 +5,7 @@ import json
 import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "catalog" / "detections.yaml"
@@ -85,6 +86,14 @@ def main() -> int:
                 failures.append(f"{name}: needs both positive and false-positive regression cases")
         except (json.JSONDecodeError, OSError, ValueError) as error:
             failures.append(f"{name}: invalid fixture: {error}")
+
+    dashboard = ROOT / "docs" / "dashboard.md"
+    matrix = ROOT / "reports" / "mitre-coverage.md"
+    before = {path: path.read_bytes() if path.exists() else None for path in (dashboard, matrix)}
+    subprocess.run([sys.executable, str(ROOT / "scripts" / "generate_dashboard.py")], check=True)
+    for path, original in before.items():
+        if original != path.read_bytes():
+            failures.append(f"generated report is stale: {path.relative_to(ROOT)} (run python scripts/generate_dashboard.py)")
 
     if failures:
         print("QUALITY GATE FAILED")
