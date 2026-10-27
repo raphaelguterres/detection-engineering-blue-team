@@ -1,0 +1,12 @@
+<group name="local,windows,attack,">
+  <rule id="100120" level="10">
+    <if_group>sysmon_event1</if_group>
+    <field name="win.eventdata.image" type="pcre2">(?i)\\schtasks\.exe$</field>
+    <field name="win.eventdata.commandLine" type="pcre2">(?i)(?:^|\s)/(?:create)(?:\s|$)</field>
+    <description>Scheduled task created using schtasks.exe</description>
+    <mitre>
+      <id>T1053.005</id>
+    </mitre>
+    <group>attack.persistence,scheduled_task,</group>
+  </rule>
+</group>

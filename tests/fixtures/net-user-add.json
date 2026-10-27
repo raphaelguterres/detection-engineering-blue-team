@@ -1,0 +1,25 @@
+{
+  "rule_id": 100140,
+  "cases": [
+    {
+      "name": "detects_net_user_add",
+      "expected_alert": true,
+      "event": {
+        "win.system.providerName": "Microsoft-Windows-Sysmon",
+        "win.system.eventID": "1",
+        "win.eventdata.image": "C:\\Windows\\System32\\net.exe",
+        "win.eventdata.commandLine": "net user DetectionDemo TemporaryPassword123! /add"
+      }
+    },
+    {
+      "name": "does_not_alert_on_net_user_query",
+      "expected_alert": false,
+      "event": {
+        "win.system.providerName": "Microsoft-Windows-Sysmon",
+        "win.system.eventID": "1",
+        "win.eventdata.image": "C:\\Windows\\System32\\net.exe",
+        "win.eventdata.commandLine": "net user"
+      }
+    }
+  ]
+}

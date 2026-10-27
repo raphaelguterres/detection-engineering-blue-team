@@ -55,3 +55,86 @@ detections:
       - restart the Wazuh manager and validate rule loading
     owner: blue-team
 
+  - id: DET-WIN-SCHTASKS-001
+    title: Criação de tarefa agendada via schtasks
+    status: production
+    rule_id: 100120
+    platform: windows
+    tactic: persistence
+    technique: T1053.005
+    technique_name: Scheduled Task/Job: Scheduled Task
+    severity: medium
+    data_sources:
+      - Sysmon Event ID 1
+      - Windows process creation telemetry
+    rule_file: rules/windows/100120-schtasks-create.xml
+    tests_file: tests/fixtures/schtasks-create.json
+    simulation: simulations/windows/schtasks-create.md
+    evidence:
+      rationale: Scheduled tasks can provide recurring execution and persistence.
+      reference: https://attack.mitre.org/techniques/T1053/005/
+    false_positives:
+      - approved software deployment and patch-management jobs
+      - administrator-created maintenance tasks
+    tuning:
+      - baseline approved task names, creators and action paths before excluding them
+    rollback:
+      - remove 100120-schtasks-create.xml from the Wazuh local rules directory
+      - restart the Wazuh manager and validate rule loading
+    owner: blue-team
+
+  - id: DET-WIN-RUNKEY-001
+    title: Modificação de Run Key de inicialização
+    status: production
+    rule_id: 100130
+    platform: windows
+    tactic: persistence
+    technique: T1547.001
+    technique_name: Registry Run Keys / Startup Folder
+    severity: high
+    data_sources:
+      - Sysmon Event ID 13
+      - Windows registry telemetry
+    rule_file: rules/windows/100130-run-key-modification.xml
+    tests_file: tests/fixtures/run-key-modification.json
+    simulation: simulations/windows/run-key-modification.md
+    evidence:
+      rationale: Run and RunOnce keys execute referenced programs at user logon.
+      reference: https://attack.mitre.org/techniques/T1547/001/
+    false_positives:
+      - approved application updaters
+      - installer activity with documented change control
+    tuning:
+      - validate signer, target path and deployment record before creating exceptions
+    rollback:
+      - remove 100130-run-key-modification.xml from the Wazuh local rules directory
+      - restart the Wazuh manager and validate rule loading
+    owner: blue-team
+
+  - id: DET-WIN-LOCALACCOUNT-001
+    title: Criação de conta local via net.exe
+    status: production
+    rule_id: 100140
+    platform: windows
+    tactic: persistence
+    technique: T1136.001
+    technique_name: Create Account: Local Account
+    severity: high
+    data_sources:
+      - Sysmon Event ID 1
+      - Windows process creation telemetry
+    rule_file: rules/windows/100140-net-user-add.xml
+    tests_file: tests/fixtures/net-user-add.json
+    simulation: simulations/windows/net-user-add.md
+    evidence:
+      rationale: New local accounts may establish secondary access to a host.
+      reference: https://attack.mitre.org/techniques/T1136/001/
+    false_positives:
+      - approved local break-glass or service account provisioning
+    tuning:
+      - correlate with change ticket, approved administrator and account lifecycle record
+    rollback:
+      - remove 100140-net-user-add.xml from the Wazuh local rules directory
+      - restart the Wazuh manager and validate rule loading
+    owner: blue-team
+

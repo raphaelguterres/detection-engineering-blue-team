@@ -1,0 +1,11 @@
+<group name="local,windows,attack,">
+  <rule id="100130" level="12">
+    <if_group>sysmon_event13</if_group>
+    <field name="win.eventdata.targetObject" type="pcre2">(?i)\\software\\microsoft\\windows\\currentversion\\run(?:once)?\\</field>
+    <description>Registry Run or RunOnce key modified</description>
+    <mitre>
+      <id>T1547.001</id>
+    </mitre>
+    <group>attack.persistence,registry_run_keys,</group>
+  </rule>
+</group>

@@ -45,5 +45,8 @@ O gate valida IDs únicos, campos mínimos de qualidade, arquivos referenciados,
 ## Referências
 
 - [MITRE ATT&CK – T1059.001 PowerShell](https://attack.mitre.org/techniques/T1059/001/)
+- [MITRE ATT&CK – T1053.005 Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)
+- [MITRE ATT&CK – T1547.001 Run Keys / Startup Folder](https://attack.mitre.org/techniques/T1547/001/)
+- [MITRE ATT&CK – T1136.001 Local Account](https://attack.mitre.org/techniques/T1136/001/)
 - [Wazuh – regras customizadas](https://documentation.wazuh.com/current/user-manual/ruleset/rules/custom.html)
 

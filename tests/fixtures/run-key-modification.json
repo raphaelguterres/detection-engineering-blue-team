@@ -1,0 +1,23 @@
+{
+  "rule_id": 100130,
+  "cases": [
+    {
+      "name": "detects_current_user_run_key",
+      "expected_alert": true,
+      "event": {
+        "win.system.providerName": "Microsoft-Windows-Sysmon",
+        "win.system.eventID": "13",
+        "win.eventdata.targetObject": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\DetectionEngineeringDemo"
+      }
+    },
+    {
+      "name": "does_not_alert_on_unrelated_registry_value",
+      "expected_alert": false,
+      "event": {
+        "win.system.providerName": "Microsoft-Windows-Sysmon",
+        "win.system.eventID": "13",
+        "win.eventdata.targetObject": "HKCU\\Software\\ExampleVendor\\Preferences\\Theme"
+      }
+    }
+  ]
+}
