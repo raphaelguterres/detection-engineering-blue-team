@@ -9,7 +9,7 @@
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
         "event_id": 1,
-        "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
+        "fields": ["win.system.channel", "win.system.severityValue", "win.eventdata.image", "win.eventdata.commandLine"]
       },
       "wazuh_evidence": {
         "rule_id": 110100,
