@@ -1,6 +1,6 @@
 # Validação operacional registrada
 
-## DET-WIN-PS-ENC-001
+## DET-WIN-PS-ENC-001 — PowerShell codificado
 
 | Campo | Registro sanitizado |
 | --- | --- |
@@ -16,6 +16,21 @@
 ## Interpretação
 
 A simulação comprovou a cadeia operacional completa: a criação de processo foi registrada pelo Sysmon, coletada pelo agente, analisada pelo Wazuh Manager e correlacionada pela regra local. A validação não substitui os fixtures de regressão nem o quality gate; ela os complementa com evidência de execução em ambiente isolado.
+
+## DET-WIN-RUNDLL32-001 — Rundll32 em caminho gravável
+
+| Campo | Registro sanitizado |
+| --- | --- |
+| Estado | Detectado em laboratório isolado e autorizado |
+| Regra Wazuh | `110110` |
+| MITRE ATT&CK | `T1218.011` — Signed Binary Proxy Execution: Rundll32 |
+| Fonte de telemetria | Sysmon, Event ID 1, via agente Wazuh para o Manager |
+| Simulação | `rundll32.exe` apontando para DLL inexistente sob `C:\Users\Public` |
+| Resultado no Manager | A regra `110110` gerou alerta após a criação de processo |
+| Segurança da execução | O Windows informou que o módulo não foi encontrado; nenhuma DLL foi criada ou carregada |
+| Dados excluídos | Logs brutos, IPs internos, identificadores de agente, usuários, timestamps e screenshots |
+
+A execução confirma que a condição de caminho gravável pelo usuário é correlacionada pelo Wazuh sem depender de DLL de teste ou de carregamento de código.
 
 ## Procedimento repetível
 
