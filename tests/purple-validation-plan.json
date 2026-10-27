@@ -25,14 +25,14 @@
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
         "event_id": 1,
-        "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
+        "fields": ["win.system.channel", "win.system.severityValue", "win.eventdata.image", "win.eventdata.commandLine"]
       },
       "wazuh_evidence": {
         "rule_id": 110110,
         "mitre": "T1218.011",
         "capture": "timestamp, agent identifier sanitized, rule description"
       },
-      "cleanup": "Use only the synthetic regression fixture unless an organization-approved signed test DLL exists; remove approved artifacts after testing."
+      "cleanup": "Use a nonexistent path in a user-writable directory; do not create or execute a DLL. Close the expected error dialog after validation."
     },
     {
       "detection_id": "DET-WIN-SCHTASKS-001",

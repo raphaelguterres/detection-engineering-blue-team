@@ -7,6 +7,8 @@
       "event": {
         "win.system.providerName": "Microsoft-Windows-Sysmon",
         "win.system.eventID": "1",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
         "win.eventdata.image": "C:\\Windows\\System32\\rundll32.exe",
         "win.eventdata.commandLine": "rundll32.exe C:\\Users\\Public\\demo.dll,EntryPoint"
       }
@@ -17,6 +19,8 @@
       "event": {
         "win.system.providerName": "Microsoft-Windows-Sysmon",
         "win.system.eventID": "1",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
         "win.eventdata.image": "C:\\Windows\\System32\\rundll32.exe",
         "win.eventdata.commandLine": "rundll32.exe shell32.dll,Control_RunDLL"
       }
