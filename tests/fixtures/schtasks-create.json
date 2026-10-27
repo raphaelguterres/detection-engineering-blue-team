@@ -7,6 +7,8 @@
       "event": {
         "win.system.providerName": "Microsoft-Windows-Sysmon",
         "win.system.eventID": "1",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
         "win.eventdata.image": "C:\\Windows\\System32\\schtasks.exe",
         "win.eventdata.commandLine": "schtasks.exe /create /tn DetectionEngineeringDemo /sc once /st 23:59 /tr cmd.exe"
       }
@@ -17,6 +19,8 @@
       "event": {
         "win.system.providerName": "Microsoft-Windows-Sysmon",
         "win.system.eventID": "1",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
         "win.eventdata.image": "C:\\Windows\\System32\\schtasks.exe",
         "win.eventdata.commandLine": "schtasks.exe /query /tn DetectionEngineeringDemo"
       }

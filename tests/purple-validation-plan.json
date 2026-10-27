@@ -41,7 +41,7 @@
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
         "event_id": 1,
-        "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
+        "fields": ["win.system.channel", "win.system.severityValue", "win.eventdata.image", "win.eventdata.commandLine"]
       },
       "wazuh_evidence": {
         "rule_id": 110120,
@@ -57,7 +57,7 @@
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
         "event_id": 13,
-        "fields": ["win.eventdata.targetObject"]
+        "fields": ["win.system.channel", "win.system.severityValue", "win.eventdata.targetObject"]
       },
       "wazuh_evidence": {
         "rule_id": 110130,
@@ -73,14 +73,14 @@
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
         "event_id": 1,
-        "fields": ["win.eventdata.image", "win.eventdata.commandLine"]
+        "fields": ["win.system.channel", "win.system.severityValue", "win.eventdata.image", "win.eventdata.commandLine"]
       },
       "wazuh_evidence": {
         "rule_id": 110140,
         "mitre": "T1136.001",
         "capture": "timestamp, agent identifier sanitized, rule description"
       },
-      "cleanup": "Fixture-only by default; if a formally approved lab account is used, remove it immediately and confirm removal."
+      "cleanup": "Use an isolated lab only; create an unprivileged temporary account with an interactive password prompt, delete it immediately and confirm removal."
     }
   ]
 }

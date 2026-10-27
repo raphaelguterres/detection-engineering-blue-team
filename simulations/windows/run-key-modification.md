@@ -6,19 +6,18 @@ Validar `DET-WIN-RUNKEY-001` com um valor temporário que não executa programa 
 
 ## Execução
 
-Em um host autorizado com Sysmon Event ID 13, execute:
+Em uma VM Windows isolada e autorizada com Sysmon Event ID 13, execute:
 
 ```powershell
 New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'DetectionEngineeringDemo' -Value 'cmd.exe /c echo DETECTION-TEST' -Force
+Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'DetectionEngineeringDemo'
 ```
 
 ## Resultado esperado
 
-O evento de alteração de registro deve conter a chave `Run` e gerar o rule ID `110130`.
+O primeiro comando cria o valor temporário e o segundo o remove imediatamente. O evento de alteração de registro deve conter a chave `Run` e gerar o rule ID `110130`.
 
 ## Limpeza
 
-```powershell
-Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'DetectionEngineeringDemo'
-```
+Não faça logoff ou reinicie a VM entre os comandos. Se a remoção falhar, execute-a novamente antes de encerrar a sessão.
 

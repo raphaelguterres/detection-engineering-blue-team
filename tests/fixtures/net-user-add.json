@@ -7,6 +7,8 @@
       "event": {
         "win.system.providerName": "Microsoft-Windows-Sysmon",
         "win.system.eventID": "1",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
         "win.eventdata.image": "C:\\Windows\\System32\\net.exe",
         "win.eventdata.commandLine": "net user DetectionDemo TemporaryPassword123! /add"
       }
@@ -17,6 +19,8 @@
       "event": {
         "win.system.providerName": "Microsoft-Windows-Sysmon",
         "win.system.eventID": "1",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
         "win.eventdata.image": "C:\\Windows\\System32\\net.exe",
         "win.eventdata.commandLine": "net user"
       }

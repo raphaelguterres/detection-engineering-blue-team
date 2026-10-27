@@ -7,6 +7,8 @@
       "event": {
         "win.system.providerName": "Microsoft-Windows-Sysmon",
         "win.system.eventID": "13",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
         "win.eventdata.targetObject": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\DetectionEngineeringDemo"
       }
     },
@@ -16,6 +18,8 @@
       "event": {
         "win.system.providerName": "Microsoft-Windows-Sysmon",
         "win.system.eventID": "13",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
         "win.eventdata.targetObject": "HKCU\\Software\\ExampleVendor\\Preferences\\Theme"
       }
     }
