@@ -12,7 +12,11 @@ Leia a [arquitetura e o fluxo de promoção](docs/architecture.md) para entender
 
 ## Dashboard
 
-O [dashboard de detecções](docs/dashboard.md) e a [matriz de cobertura MITRE](reports/mitre-coverage.md) são gerados a partir do catálogo. O badge acima mostra o estado atual do pipeline de qualidade no GitHub Actions.
+Abra o [dashboard visual local](dashboard/index.html) para explorar o catálogo por severidade. O [dashboard em Markdown](docs/dashboard.md) e a [matriz de cobertura MITRE](reports/mitre-coverage.md) são gerados a partir do catálogo. O badge acima mostra o estado atual do pipeline de qualidade no GitHub Actions.
+
+## Purple Team seguro
+
+As simulações benignas são a ponte entre a regra versionada e a validação operacional no Wazuh. Consulte o [contrato de Purple Team seguro](docs/purple-team-safe.md) e use o [modelo de registro de validação](simulations/validation-record-template.md) para registrar hipótese, telemetria esperada, evidência e limpeza sem versionar dados sensíveis.
 
 ## O que existe aqui
 

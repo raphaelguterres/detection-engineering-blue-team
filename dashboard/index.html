@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Dashboard local do portfólio de detecções Wazuh.">
+    <title>Detection Engineering | Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Detection Engineering Blue Team</p>
+          <h1>Estado da cobertura</h1>
+        </div>
+        <div class="signal"><span></span>Catálogo versionado</div>
+      </header>
+
+      <section class="metrics" aria-label="Resumo do catálogo" id="metrics"></section>
+
+      <section class="grid">
+        <article class="panel coverage">
+          <div class="panel-heading"><div><p class="eyebrow">MITRE ATT&amp;CK</p><h2>Cobertura por tática</h2></div></div>
+          <div id="tactics" class="bars"></div>
+        </article>
+        <article class="panel quality">
+          <div class="panel-heading"><div><p class="eyebrow">Quality gate</p><h2>Postura de qualidade</h2></div></div>
+          <ul class="checks">
+            <li><span>✓</span>Regra XML e IDs consistentes</li>
+            <li><span>✓</span>MITRE, severidade e evidência exigidos</li>
+            <li><span>✓</span>Caso positivo e benigno por regra</li>
+            <li><span>✓</span>Rollback e simulação documentados</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="panel portfolio">
+        <div class="panel-heading">
+          <div><p class="eyebrow">Portfólio</p><h2>Detecções rastreáveis</h2></div>
+          <label class="filter">Filtrar <select id="severity-filter"><option value="all">Todas as severidades</option></select></label>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>Detecção</th><th>MITRE</th><th>Tática</th><th>Severidade</th><th>Validação</th></tr></thead><tbody id="detections"></tbody></table></div>
+      </section>
+
+      <footer>Dados gerados de <code>catalog/detections.yaml</code> · Execute <code>python scripts/generate_dashboard.py</code> após alterar o catálogo.</footer>
+    </main>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -89,7 +89,8 @@ def main() -> int:
 
     dashboard = ROOT / "docs" / "dashboard.md"
     matrix = ROOT / "reports" / "mitre-coverage.md"
-    before = {path: path.read_bytes() if path.exists() else None for path in (dashboard, matrix)}
+    dashboard_data = ROOT / "dashboard" / "data.js"
+    before = {path: path.read_bytes() if path.exists() else None for path in (dashboard, matrix, dashboard_data)}
     subprocess.run([sys.executable, str(ROOT / "scripts" / "generate_dashboard.py")], check=True)
     for path, original in before.items():
         if original != path.read_bytes():

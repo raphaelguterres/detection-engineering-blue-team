@@ -40,6 +40,8 @@ flowchart LR
 5. Após revisão e aprovação no CI, a regra pode ser importada no Wazuh Manager por meio do processo de mudança da organização.
 6. Feedback de analistas atualiza o tuning e os casos de regressão; alterações não são aplicadas diretamente no manager sem passar pelo repositório.
 
+Para a validação operacional, siga o [contrato de Purple Team seguro](purple-team-safe.md). Ele mantém os testes em VMs autorizadas e separa os procedimentos de simulação das evidências sensíveis do ambiente.
+
 ## Critério de pronto
 
 Uma detecção está pronta para produção quando a regra foi validada no laboratório, o quality gate passa, os falsos positivos conhecidos estão documentados e existe um rollback executável. Isso torna uma exceção ou reversão tão reproduzível quanto a própria regra.

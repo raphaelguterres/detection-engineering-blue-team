@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 from collections import Counter
+import json
 from pathlib import Path
 
 from quality_gate import CATALOG, ROOT, parse_catalog
 
 DASHBOARD = ROOT / "docs" / "dashboard.md"
 MATRIX = ROOT / "reports" / "mitre-coverage.md"
+DATA = ROOT / "dashboard" / "data.js"
 
 
 def table(rows: list[list[str]], headers: list[str]) -> str:
@@ -20,6 +22,7 @@ def main() -> None:
     entries = parse_catalog(CATALOG.read_text(encoding="utf-8"))
     DASHBOARD.parent.mkdir(parents=True, exist_ok=True)
     MATRIX.parent.mkdir(parents=True, exist_ok=True)
+    DATA.parent.mkdir(parents=True, exist_ok=True)
     tactics = Counter(str(item["tactic"]) for item in entries)
     severities = Counter(str(item["severity"]) for item in entries)
     statuses = Counter(str(item["status"]) for item in entries)
@@ -69,6 +72,36 @@ def main() -> None:
         f"Cobertura atual: **{len(techniques)} técnicas** em **{len(tactics)} táticas**.\n\n"
         + table(matrix_rows, ["Técnica", "Nome", "Tática", "Detecção", "Regra Wazuh"])
         + "\n",
+        encoding="utf-8",
+    )
+    DATA.write_text(
+        "window.DETECTION_DASHBOARD = "
+        + json.dumps(
+            {
+                "summary": {
+                    "detections": len(entries),
+                    "techniques": len(techniques),
+                    "tactics": len(tactics),
+                    "regression_pairs": len(entries),
+                },
+                "tactics": dict(sorted(tactics.items())),
+                "severities": dict(sorted(severities.items())),
+                "detections": [
+                    {
+                        "id": item["id"],
+                        "technique": item["technique"],
+                        "tactic": item["tactic"],
+                        "severity": item["severity"],
+                        "status": item["status"],
+                        "simulation": item["simulation"],
+                    }
+                    for item in sorted(entries, key=lambda value: str(value["id"]))
+                ],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + ";\n",
         encoding="utf-8",
     )
 
