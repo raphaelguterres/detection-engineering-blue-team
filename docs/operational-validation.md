@@ -32,6 +32,21 @@ A simulação comprovou a cadeia operacional completa: a criação de processo f
 
 A execução confirma que a condição de caminho gravável pelo usuário é correlacionada pelo Wazuh sem depender de DLL de teste ou de carregamento de código.
 
+## DET-WIN-SCHTASKS-001 — Tarefa agendada descartável
+
+| Campo | Registro sanitizado |
+| --- | --- |
+| Estado | Detectado em laboratório isolado e autorizado |
+| Regra Wazuh | `110120` |
+| MITRE ATT&CK | `T1053.005` — Scheduled Task/Job: Scheduled Task |
+| Fonte de telemetria | Sysmon, Event ID 1, via agente Wazuh para o Manager |
+| Simulação | Criação de `DetectionEngineeringDemo` com execução única, seguida de remoção imediata |
+| Resultado no Manager | A regra `110120` gerou alerta após a criação da tarefa |
+| Segurança da execução | A tarefa não foi executada e foi removida no mesmo fluxo |
+| Dados excluídos | Logs brutos, IPs internos, identificadores de agente, usuários, timestamps e screenshots |
+
+A execução confirma que a criação de tarefa por `schtasks.exe` é correlacionada pela regra local e pode ser validada sem manter um artefato de persistência no laboratório.
+
 ## Procedimento repetível
 
 1. Siga a [simulação de PowerShell com comando codificado](../simulations/windows/powershell-encoded-command.md).
