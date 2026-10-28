@@ -47,6 +47,21 @@ A execução confirma que a condição de caminho gravável pelo usuário é cor
 
 A execução confirma que a criação de tarefa por `schtasks.exe` é correlacionada pela regra local e pode ser validada sem manter um artefato de persistência no laboratório.
 
+## DET-WIN-RUNKEY-001 — Run Key temporária
+
+| Campo | Registro sanitizado |
+| --- | --- |
+| Estado | Bloqueado por pré requisito de telemetria |
+| Regra Wazuh | `110130` |
+| MITRE ATT&CK | `T1547.001` — Registry Run Keys / Startup Folder |
+| Simulação | Valor temporário em `HKCU\...\Run`, removido no mesmo fluxo |
+| Verificação no endpoint | A criação e a remoção foram concluídas; o Sysmon não registrou Event ID 13 para o teste |
+| Verificação no Manager | Nenhum evento do teste chegou ao arquivo de eventos; nenhum alerta `110130` foi gerado |
+| Conclusão | Habilitar a coleta Sysmon de Event ID 13 antes de repetir a validação |
+| Limpeza | Valor removido; `logall_json` restaurado para `no` após o diagnóstico |
+
+A regra permanece com fixture de regressão e contrato de rollback, mas não deve ser considerada validada operacionalmente neste laboratório até a telemetria Event ID 13 estar disponível.
+
 ## Procedimento repetível
 
 1. Siga a [simulação de PowerShell com comando codificado](../simulations/windows/powershell-encoded-command.md).
@@ -56,4 +71,4 @@ A execução confirma que a criação de tarefa por `schtasks.exe` é correlacio
 
 ## Próxima validação
 
-Validar `DET-WIN-RUNDLL32-001` com a fixture sintética e a simulação segura correspondente antes de promover qualquer alteração de tuning.
+Validar `DET-WIN-LOCALACCOUNT-001` com uma conta local temporária, sem privilégios e removida no mesmo fluxo, após confirmação explícita do operador.
