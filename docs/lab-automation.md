@@ -20,6 +20,12 @@ As duas VMs foram confirmadas em execução. O Kali estava desbloqueado, com ter
 
 O desbloqueio da sessão foi resolvido, mas a verificação da identidade SSH e a autenticação seguem pendentes. A próxima ação depende de restaurar a entrada pelo controle gráfico ou disponibilizar um canal remoto já autenticado. Nenhum novo teste operacional foi executado nesta retomada.
 
+### Conectividade — retomada em 29/10/2026
+
+As janelas de ambas as VMs estavam abertas. A porta TCP 22 do Kali respondeu, mas a conexão SSH com `StrictHostKeyChecking=yes` parou porque a chave ED25519 desse endereço não está cadastrada no `known_hosts`. Não aprovei automaticamente uma chave recebida pela rede.
+
+A porta WinRM 5985 no endereço previamente observado do Windows não respondeu nesta tentativa; não houve sessão nem comando enviado ao Windows. `VBoxManage list runningvms` e a consulta de vizinhos via CIM também retornaram `E_ACCESSDENIED`. A entrada de comandos na janela do Kali não pôde ser confirmada, então não houve preflight, alteração de regra ou simulação.
+
 ## Pré-requisitos
 
 No controlador Windows: Python 3.10+, Windows PowerShell 5.1 e OpenSSH Client. No Kali: SSH autenticado por chave e permissão para `docker exec` no container correto, sem prompt de senha. No container: Python 3.10+; o exemplo usa `/var/ossec/framework/python/bin/python3` e esse caminho precisa ser confirmado.

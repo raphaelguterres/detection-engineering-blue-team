@@ -84,3 +84,5 @@ O CI da automação foi aprovado no GitHub. Na primeira retomada, ambas as VMs e
 ### Retomada de acesso — 29/10/2026
 
 O Kali foi encontrado desbloqueado em uma sessão root, com ambas as VMs em execução. A entrada de texto pelo controle gráfico falhou com `0x80070005` antes da execução da consulta da chave SSH. A automação permanece pendente de autenticação; o total operacional confirmado continua sendo três de cinco detecções.
+
+Na tentativa seguinte, a porta SSH do Kali respondeu, mas a identidade do host não estava no `known_hosts`, então a conexão estrita foi recusada. WinRM no endereço observado do Windows não respondeu. O executor não enviou comandos e nenhuma nova detecção foi validada.
