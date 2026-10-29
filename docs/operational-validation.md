@@ -79,4 +79,8 @@ Foi adicionado o [executor remoto com documentação](lab-automation.md). As ver
 
 A tentativa manual mais recente de `net user` exibiu ajuda de sintaxe, sem confirmação de criação. Esse resultado não valida a regra `110140`. O cenário automático usa nome único, conta desabilitada, senha por entrada padrão e remoção no mesmo fluxo; permanece pendente de validação real.
 
-O CI da automação foi aprovado no GitHub. As duas VMs foram retomadas de estado salvo; o Kali permaneceu na tela de desbloqueio. Nenhuma nova validação operacional foi contabilizada durante essa preparação.
+O CI da automação foi aprovado no GitHub. Na primeira retomada, ambas as VMs estavam salvas e o Kali permaneceu bloqueado. Na retomada seguinte, as VMs voltaram à execução e o Kali já estava desbloqueado. Nenhuma nova validação operacional foi contabilizada durante essas preparações.
+
+### Retomada de acesso — 29/10/2026
+
+O Kali foi encontrado desbloqueado em uma sessão root, com ambas as VMs em execução. A entrada de texto pelo controle gráfico falhou com `0x80070005` antes da execução da consulta da chave SSH. A automação permanece pendente de autenticação; o total operacional confirmado continua sendo três de cinco detecções.

@@ -14,6 +14,12 @@ O commit `909247b` foi publicado e o [CI correspondente](https://github.com/raph
 
 O acesso existente pode dispensar instalação de serviços. Faltam a verificação da identidade SSH, uma autenticação autorizada e o inventário local preenchido. Não é preciso trocar de modelo para executar os scripts.
 
+### Retomada em 29/10/2026
+
+As duas VMs foram confirmadas em execução. O Kali estava desbloqueado, com terminal root aberto. A tentativa de inserir a consulta somente de leitura `ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` pelo controle gráfico retornou `Acesso negado (0x80070005)`. Uma nova observação confirmou que o comando não foi inserido. A causa do erro de entrada não foi determinada; não há evidência suficiente para atribuí-lo a uma diferença de elevação entre os aplicativos.
+
+O desbloqueio da sessão foi resolvido, mas a verificação da identidade SSH e a autenticação seguem pendentes. A próxima ação depende de restaurar a entrada pelo controle gráfico ou disponibilizar um canal remoto já autenticado. Nenhum novo teste operacional foi executado nesta retomada.
+
 ## Pré-requisitos
 
 No controlador Windows: Python 3.10+, Windows PowerShell 5.1 e OpenSSH Client. No Kali: SSH autenticado por chave e permissão para `docker exec` no container correto, sem prompt de senha. No container: Python 3.10+; o exemplo usa `/var/ossec/framework/python/bin/python3` e esse caminho precisa ser confirmado.
