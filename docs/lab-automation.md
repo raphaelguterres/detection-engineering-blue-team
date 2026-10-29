@@ -10,6 +10,8 @@ O executor em `scripts/lab/run.py` coordena o Wazuh via SSH/Docker e o endpoint 
 - O conector Desktop Commander estava offline.
 - Os scripts passaram em testes locais de lógica e sintaxe. **Ainda não houve execução deste novo pipeline nas VMs.**
 
+O commit `909247b` foi publicado e o [CI correspondente](https://github.com/raphaelguterres/detection-engineering-blue-team/actions/runs/40805456207) concluiu com sucesso: 18 testes offline, quality gate e sintaxe Windows PowerShell. Em uma verificação posterior, ambas as VMs estavam em estado salvo e foram retomadas com sucesso. O Kali apresentou tela de desbloqueio, impedindo continuar a conferência da identidade SSH pela sessão gráfica. Próximo ponto de retomada: desbloquear o Kali, conferir a chave do host e concluir autenticação SSH/WinRM antes do primeiro preflight remoto.
+
 O acesso existente pode dispensar instalação de serviços. Faltam a verificação da identidade SSH, uma autenticação autorizada e o inventário local preenchido. Não é preciso trocar de modelo para executar os scripts.
 
 ## Pré-requisitos
