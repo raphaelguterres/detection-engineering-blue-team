@@ -72,3 +72,9 @@ A regra permanece com fixture de regressão e contrato de rollback, mas não dev
 ## Próxima validação
 
 Validar `DET-WIN-LOCALACCOUNT-001` com uma conta local temporária, sem privilégios e removida no mesmo fluxo, após confirmação explícita do operador.
+
+## Automação preparada — 28/10/2026
+
+Foi adicionado o [executor remoto com documentação](lab-automation.md). As verificações locais cobrem correlação de alertas, falhas de transporte, conflitos de regras e restauração de backup, além de sintaxe PowerShell. O SSH do Kali e a identificação WinRM do Windows responderam; a autenticação remota ainda não foi estabelecida. Não houve nova simulação nas VMs por este executor e os três resultados operacionais anteriores permanecem o total confirmado.
+
+A tentativa manual mais recente de `net user` exibiu ajuda de sintaxe, sem confirmação de criação. Esse resultado não valida a regra `110140`. O cenário automático usa nome único, conta desabilitada, senha por entrada padrão e remoção no mesmo fluxo; permanece pendente de validação real.

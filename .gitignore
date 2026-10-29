@@ -3,3 +3,5 @@ __pycache__/
 .pytest_cache/
 .impeccable/
 .playwright-mcp/
+.lab/
+*.credential.xml

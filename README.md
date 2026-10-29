@@ -20,6 +20,18 @@ As simulações benignas são a ponte entre a regra versionada e a validação o
 
 As validações operacionais sanitizadas estão documentadas em [Validação operacional registrada](docs/operational-validation.md).
 
+## Automação remota
+
+O [executor do laboratório](docs/lab-automation.md) coordena SSH/Docker no Kali e WinRM no Windows: verificação inicial, instalação de regras com backup, regressão no Wazuh, simulações benignas, coleta de evidência e limpeza. O plano pode ser consultado sem conexão:
+
+```powershell
+python scripts/lab/run.py plan
+```
+
+Com inventário e autenticação configurados, `python scripts/lab/run.py pipeline` executa a sequência. Relatórios e credenciais ficam fora do Git. A automação foi testada localmente; a primeira execução autenticada nas VMs ainda está pendente.
+
+Estado operacional registrado: **3 de 5 detecções confirmadas**; Run Key aguarda telemetria Sysmon Event ID 13, e conta local aguarda validação. Consulte o registro operacional para distinguir esses resultados dos testes de contrato do CI.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;

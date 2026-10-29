@@ -26,3 +26,7 @@ O primeiro comando solicita a senha localmente, sem registrá-la no histórico n
 
 Um processo `net.exe` com `user <nome> * /add` deve gerar o rule ID `110140`.
 
+## Variante automatizada
+
+O [executor remoto](../../docs/lab-automation.md) inclui uma variante com nome único, conta desabilitada (`/active:no`), senha aleatória enviada por stdin e remoção em `finally`. Ela exige `--include-account` e continua pendente de validação real no laboratório. A criação do processo detectável não prova que a conta foi criada: confira também o resultado do comando e a limpeza.
+

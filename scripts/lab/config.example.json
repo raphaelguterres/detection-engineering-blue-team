@@ -1,0 +1,17 @@
+{
+  "isolated_lab": true,
+  "manager": {
+    "ssh_target": "kali@REPLACE_KALI_HOST",
+    "container": "REPLACE_WAZUH_CONTAINER",
+    "python": "/var/ossec/framework/python/bin/python3",
+    "agent_id": "REPLACE_AGENT_ID"
+  },
+  "windows": {
+    "computer_name": "REPLACE_WINDOWS_HOST",
+    "expected_hostname": "REPLACE_WINDOWS_COMPUTERNAME",
+    "use_ssl": true,
+    "authentication": "Negotiate",
+    "credential_path": ""
+  },
+  "alert_timeout_seconds": 60
+}
