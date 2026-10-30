@@ -156,3 +156,9 @@ Após o operador reiniciar a VM, o Guest Additions atualizou novamente e o deskt
 O inventário local ignorado pelo Git foi atualizado para apontar a coleta de evidência ao agente `004` e o endpoint WinRM observado. As portas 5986, RDP, SSH e SMB não responderam; apenas o listener WinRM HTTP está aberto. O handshake `Test-WSMan` comprova o listener, não autenticação nem autorização para comandos.
 
 As regras `110130` e `110140` ainda não foram simuladas: falta uma credencial WinRM autorizada e armazenada localmente em formato DPAPI para o usuário que executa o executor. Depois de disponibilizar esse arquivo, executar primeiro `preflight`, confirmar Sysmon/Wazuh e a telemetria Event ID 13; então rodar `run --scenario runkey` e `run --scenario localaccount`, confirmando alerta e limpeza em cada relatório antes de contar a validação como operacional.
+
+### Credencial DPAPI criada — 30/10/2026
+
+O arquivo `.lab/windows.credential.xml` agora existe no controlador e `Import-Clixml` o reconhece como `PSCredential` para `Administrator`. A tentativa de sessão remota continua falhando com `0x8009030e` (`ExplicitCredentialsRequired`/sessão de logon inexistente), que também informa que a identidade do servidor não foi validada. O `TrustedHosts` do controlador não contém o endpoint. A tentativa de adicioná-lo foi negada por falta de privilégio administrativo; nenhuma alteração foi feita no registro nem no Windows convidado.
+
+O próximo passo é adicionar somente `192.168.56.101` à lista `TrustedHosts` no controlador usando PowerShell elevado, ou configurar WinRM HTTPS com certificado verificável. Não usar curinga. Depois, confirmar a sessão autenticada antes de executar o preflight. A credencial exportada é local à conta e máquina controladoras; não copiá-la para a VM convidada nem para o Git.

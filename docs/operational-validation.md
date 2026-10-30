@@ -102,3 +102,5 @@ A console agora exibe a tela de login do Windows para `Administrator`; não fora
 A VM voltou à rede e iniciou o desktop. O agente Windows `004` (`WIN-TP3GFAE2OCB`) ficou ativo. O listener WinRM HTTP respondeu ao `Test-WSMan`, mas a execução remota com a identidade atual foi recusada porque são exigidas credenciais explícitas; não há credencial DPAPI local disponível. A conta autenticada no desktop da VM não autentica automaticamente a sessão WinRM iniciada pelo controlador.
 
 As duas simulações continuam pendentes e a contagem permanece **3/5**. Nenhuma simulação foi executada nesta retomada. O próximo passo é disponibilizar credencial WinRM autorizada em arquivo DPAPI local; depois validar os serviços e o Event ID 13 antes das simulações `110130` e `110140`.
+
+O arquivo DPAPI foi criado no controlador e importado como credencial `Administrator`, mas WinRM ainda não autentica: o controlador não confia no alvo, e a configuração de `TrustedHosts` exige privilégio administrativo. A tentativa de escrita foi negada e não alterou o sistema. A contagem permanece **3/5**; nenhuma simulação operacional foi executada.
