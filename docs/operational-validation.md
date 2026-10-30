@@ -96,3 +96,9 @@ Isso não altera a contagem operacional: **3/5**. As regras `110130` e `110140` 
 ### Bloqueio de acesso ao endpoint — 29/10/2026
 
 A console agora exibe a tela de login do Windows para `Administrator`; não foram fornecidas nem inseridas credenciais. WinRM, RDP, SSH e SMB estão fechados nos endereços conhecidos. O agente `003` permanece `Never connected`. A contagem segue **3/5**; executar as regras `110130` e `110140` em fixtures ou no Manager não substitui simulação benigna real, evidência Sysmon, alerta correlacionado ao agente e limpeza verificada. Retomar essas duas validações quando o Windows estiver autenticado e o agente conectado.
+
+### Retomada após reinício — 30/10/2026
+
+A VM voltou à rede e iniciou o desktop. O agente Windows `004` (`WIN-TP3GFAE2OCB`) ficou ativo. O listener WinRM HTTP respondeu ao `Test-WSMan`, mas a execução remota com a identidade atual foi recusada porque são exigidas credenciais explícitas; não há credencial DPAPI local disponível. A conta autenticada no desktop da VM não autentica automaticamente a sessão WinRM iniciada pelo controlador.
+
+As duas simulações continuam pendentes e a contagem permanece **3/5**. Nenhuma simulação foi executada nesta retomada. O próximo passo é disponibilizar credencial WinRM autorizada em arquivo DPAPI local; depois validar os serviços e o Event ID 13 antes das simulações `110130` e `110140`.

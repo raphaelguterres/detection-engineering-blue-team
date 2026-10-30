@@ -148,3 +148,11 @@ Esse resultado valida as regras e a regressão no Manager, não a cadeia operaci
 Na retomada seguinte, a console da VM mostrou o Windows inicializando e depois a tela de login do usuário `Administrator`. A sessão requer autenticação. Não foram inseridas credenciais nem executados comandos no Windows. Os canais WinRM (5985/5986), RDP (3389), SSH (22) e SMB (445) não responderam nos endereços conhecidos `192.168.56.101` e `192.168.0.10`. O agente Wazuh `003` continua `Never connected`.
 
 As validações operacionais restantes ficam bloqueadas até o Windows estar autenticado e acessível por um canal remoto autorizado, com agente conectado. Depois disso, confirmar Sysmon Event ID 13 e executar as simulações `110130` e `110140` com evidência e limpeza verificadas. Não reiniciar nem alterar credenciais como parte desta retomada.
+
+### Retomada após reiniciar a VM — 30/10/2026
+
+Após o operador reiniciar a VM, o Guest Additions atualizou novamente e o desktop Windows carregou. O agente `004` (`WIN-TP3GFAE2OCB`, Windows Server 2022) ficou `Active`; o agente cadastrado `003` continua `Never connected`. `Test-WSMan` respondeu em `192.168.56.101:5985`, mas uma sessão `Invoke-Command` usando a identidade atual falhou com `ExplicitCredentialsRequired`. Não existe `.lab/windows.credential.xml` neste controlador. Nenhum segredo foi lido, solicitado ou inserido.
+
+O inventário local ignorado pelo Git foi atualizado para apontar a coleta de evidência ao agente `004` e o endpoint WinRM observado. As portas 5986, RDP, SSH e SMB não responderam; apenas o listener WinRM HTTP está aberto. O handshake `Test-WSMan` comprova o listener, não autenticação nem autorização para comandos.
+
+As regras `110130` e `110140` ainda não foram simuladas: falta uma credencial WinRM autorizada e armazenada localmente em formato DPAPI para o usuário que executa o executor. Depois de disponibilizar esse arquivo, executar primeiro `preflight`, confirmar Sysmon/Wazuh e a telemetria Event ID 13; então rodar `run --scenario runkey` e `run --scenario localaccount`, confirmando alerta e limpeza em cada relatório antes de contar a validação como operacional.
