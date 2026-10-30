@@ -1,5 +1,9 @@
 # Validação operacional registrada
 
+Estado atual: **5/5 detecções com evidência operacional registrada**. As duas validações mais recentes, `110130` e `110140`, foram executadas via Guest Control nas VMs autorizadas e produziram alertas reais no Manager. As três primeiras são registros anteriores, não uma nova execução completa do pipeline nesta sessão.
+
+Verificações finais: Manager ativo, uma cópia de cada regra local, `logall_json=no`, serviços Sysmon e Wazuh ativos no endpoint, Run Key e conta temporárias ausentes. Passaram 11 casos de regressão no Wazuh, 19 testes offline, quality gate e parser PowerShell. Evidência detalhada fica no diretório `.lab`, ignorado pelo Git; este documento contém somente o resumo sanitizado.
+
 ## DET-WIN-PS-ENC-001 — PowerShell codificado
 
 | Campo | Registro sanitizado |
@@ -51,28 +55,29 @@ A execução confirma que a criação de tarefa por `schtasks.exe` é correlacio
 
 | Campo | Registro sanitizado |
 | --- | --- |
-| Estado | Evento recebido e regra corrigida; alerta ao vivo ainda pendente |
+| Estado | Detectado ao vivo; alerta e limpeza confirmados |
 | Regra Wazuh | `110130` |
 | MITRE ATT&CK | `T1547.001` — Registry Run Keys / Startup Folder |
 | Simulação | Valor temporário em `HKCU\...\Run`, removido no mesmo fluxo |
 | Verificação no endpoint | A primeira tentativa não gerou Event ID 13. A configuração Sysmon do laboratório foi atualizada para incluir alterações no caminho Run; a repetição registrou um evento local e confirmou a remoção do valor |
-| Verificação no Manager | O evento Event ID 13 foi recebido em `archives.json`; o replay do `full_log` real casou com `110130`, mas não foi encontrado alerta `110130` correspondente em `alerts.json` |
-| Conclusão | Corrigida a regex para aceitar separadores duplicados no `TargetObject`, formato observado no evento Wazuh. A regressão e o replay do evento real passam; a geração de alerta em análise ao vivo continua pendente |
+| Verificação no Manager | Um alerta `110130`, nível 12, correlacionado ao agente e ao marcador da simulação em `alerts.json` |
+| Conclusão | Além da regex para separadores duplicados, foi necessário vincular a regra a `61615` e `92300`. A regra nativa `92300` consumia o evento na árvore Windows com nível zero |
 | Limpeza | Valor removido; `logall_json` restaurado para `no` após o diagnóstico |
 
-A regra permanece com fixture de regressão e contrato de rollback, mas não deve ser considerada validada operacionalmente neste laboratório até que um alerta `110130` seja observado no Manager para a nova telemetria.
+O replay direto do `full_log` usava o decoder `json`; o evento ao vivo usava `windows_eventchannel`. Um replay isolado com a árvore Windows mostrou `92300` como regra final antes da correção. Após vincular a regra local a esse ramo, o Event ID 13 real produziu `110130`. A confirmação foi feita no arquivo de alertas do Manager; não comprova a indexação ou exibição no dashboard.
 
 ## DET-WIN-LOCALACCOUNT-001 — Tentativa de criação de conta local
 
 | Campo | Registro sanitizado |
 | --- | --- |
-| Estado | Simulação tentada; execução da criação falhou |
+| Estado | Detectado ao vivo; alerta e limpeza confirmados |
 | Regra Wazuh | `110140` |
 | MITRE ATT&CK | `T1136.001` — Create Account: Local Account |
-| Verificação no endpoint | Dois eventos Sysmon Event ID 1 com o marcador foram observados; o usuário temporário não existia após a execução |
-| Verificação no Manager | Nenhum alerta correlacionado foi encontrado; replay do evento em `wazuh-logtest` casou com `110140`, mas isso não comprova encaminhamento operacional |
-| Limpeza | Confirmada; nenhum usuário temporário permaneceu |
-| Conclusão | Não contabilizar como detecção; diagnosticar a falha de criação e restabelecer o transporte ao Manager antes de repetir |
+| Verificação no endpoint | Quatro eventos Sysmon Event ID 1 com o marcador; criação da conta desabilitada verificada antes da tentativa duplicada |
+| Verificação no Manager | Dois alertas `110140`, nível 12, correlacionados ao agente e ao marcador em `alerts.json` |
+| Limpeza | Conta temporária removida no `finally`; ausência confirmada |
+| Alteração preparada | O worker cria uma conta única desabilitada via LocalAccounts, executa uma tentativa duplicada benigna `net user ... /add` e remove a conta no `finally`; a senha fica como `SecureString` e não é registrada |
+| Conclusão | Regra ligada ao grupo `sysmon_event1`; cadeia endpoint → agente → Manager confirmada. A regra detecta uma tentativa por linha de comando, não comprova sucesso da criação por `net.exe` |
 
 ## Procedimento repetível
 
@@ -83,7 +88,7 @@ A regra permanece com fixture de regressão e contrato de rollback, mas não dev
 
 ## Próxima validação
 
-Investigar por que o `analysisd` ao vivo não grava `110130` embora o `full_log` arquivado case com a regra no `wazuh-logtest`; depois validar o alerta `110130` e concluir a simulação `110140` com limpeza confirmada.
+As pendências `110130` e `110140` foram concluídas no Manager. Próxima etapa: uma execução completa do pipeline e confirmação da indexação no dashboard Wazuh. Os registros históricos abaixo preservam os bloqueios encontrados antes desta conclusão.
 
 ## Automação preparada — 28/10/2026
 

@@ -30,7 +30,7 @@ python scripts/lab/run.py plan
 
 Com inventário e autenticação configurados, `python scripts/lab/run.py pipeline` executa a sequência. Relatórios e credenciais ficam fora do Git. A automação foi testada localmente; a primeira execução autenticada nas VMs ainda está pendente.
 
-Estado operacional registrado: **3 de 5 detecções confirmadas**; Run Key aguarda telemetria Sysmon Event ID 13, e conta local aguarda validação. Consulte o registro operacional para distinguir esses resultados dos testes de contrato do CI.
+Estado operacional registrado: **5 de 5 detecções com evidência de laboratório**. Run Key (`110130`) e tentativa benigna de criação de conta (`110140`) confirmadas com alertas de nível 12 e limpeza verificada. As três primeiras validações são históricas; as duas últimas foram repetidas após corrigir a árvore de regras Windows. Consulte o registro operacional para distinguir esses resultados dos testes de contrato do CI.
 
 ## O que existe aqui
 

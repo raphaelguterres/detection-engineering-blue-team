@@ -169,6 +169,32 @@ class ManagerTests(unittest.TestCase):
         with patch.object(manager.subprocess, 'run', return_value=process):
             self.assertFalse(manager.replay(request)['ok'])
 
+    def test_windows_replay_keeps_live_rules_and_config_unchanged_on_failure(self):
+        builtins = self.root / 'ruleset/rules'
+        builtins.mkdir(parents=True)
+        (self.root / 'tmp').mkdir()
+        base = builtins / '0575-win-base_rules.xml'
+        original = ('<group><rule id="60000" level="0"><category>ossec</category>'
+                    '<decoded_as>windows_eventchannel</decoded_as></rule></group>')
+        base.write_text(original)
+        config = self.root / 'etc/ossec.conf'
+        live_config = ('<ossec_config><ruleset><rule_dir>ruleset/rules</rule_dir>'
+                       '<rule_dir>etc/rules</rule_dir></ruleset></ossec_config>')
+        config.write_text(live_config)
+        (self.rules / 'custom.xml').write_text('<group />')
+        with self.assertRaisesRegex(RuntimeError, 'SIMULATED_REPLAY_FAILURE'):
+            with manager.windows_replay_config() as isolated:
+                copy = isolated.parent / 'rules/0575-win-base_rules.xml'
+                self.assertIn('<decoded_as>json</decoded_as>', copy.read_text())
+                self.assertNotIn('<category>ossec</category>', copy.read_text())
+                self.assertEqual(base.read_text(), original)
+                self.assertEqual(config.read_text(), live_config)
+                self.assertTrue((isolated.parent / 'local/custom.xml').exists())
+                raise RuntimeError('SIMULATED_REPLAY_FAILURE')
+        self.assertEqual(base.read_text(), original)
+        self.assertEqual(config.read_text(), live_config)
+        self.assertEqual(list((self.root / 'tmp').iterdir()), [])
+
 
 if __name__ == '__main__':
     unittest.main()

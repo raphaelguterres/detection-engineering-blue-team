@@ -69,7 +69,7 @@
     {
       "detection_id": "DET-WIN-LOCALACCOUNT-001",
       "rule_id": 110140,
-      "hypothesis": "A simulated net user account creation event generates a high-severity alert.",
+      "hypothesis": "A net user /add attempt against a unique disabled lab account generates the expected high-severity alert, and the temporary account is removed immediately.",
       "expected_telemetry": {
         "source": "Microsoft-Windows-Sysmon",
         "event_id": 1,

@@ -89,9 +89,9 @@ O processo retorna `0` quando a etapa selecionada passa e `2` quando há falha o
 | Rundll32 | Caminho único de DLL inexistente em `C:\Users\Public` | Encerra apenas o processo filho se o erro de módulo mantiver a janela aberta |
 | Schtasks | Tarefa `ONSTART` com `echo`, sem executar ou reiniciar a VM | Remove e confirma ausência no mesmo fluxo |
 | Run Key | Valor único HKCU com `echo` | Remove e confirma ausência em `finally` |
-| Conta local | `net user` com nome único, senha aleatória por stdin e `/active:no` | Remove e confirma ausência em `finally`; não adiciona grupos |
+| Conta local | Cria uma conta local única já desabilitada com senha aleatória em memória e executa `net user <nome> * /add /active:no` como tentativa duplicada inofensiva | Remove e confirma ausência em `finally`; não adiciona grupos |
 
-A automação usa nomes únicos em vez do nome fixo das simulações manuais. A tarefa automática é `ONSTART` para evitar diferenças de formato de data; não reinicie a VM durante o teste. O HKCU é o da **conta WinRM**, que pode ser diferente da sessão gráfica. A conta temporária depende de direitos administrativos e da política local; falha do comando interrompe o fluxo e não é considerada sucesso. A senha não é argumento de processo nem campo de relatório.
+A automação usa nomes únicos em vez do nome fixo das simulações manuais. A tarefa automática é `ONSTART` para evitar diferenças de formato de data; não reinicie a VM durante o teste. O HKCU é o da **conta WinRM**, que pode ser diferente da sessão gráfica. Para a conta local, a API LocalAccounts cria uma conta temporária desabilitada; o `net user /add` seguinte tenta criá-la novamente, gerando telemetria sem habilitar ou alterar a conta. A saída não zero desse comando é esperada; o artefato desabilitado é conferido antes da ação e removido no mesmo fluxo. A senha não é argumento de processo nem campo de relatório.
 
 `finally` permite limpeza quando o script continua executando, mas não garante recuperação após desligamento da VM ou interrupção abrupta do processo. Estado desconhecido é registrado como falha e exige recuperação antes de repetir.
 
@@ -107,7 +107,7 @@ Os arquivos `.lab/runs/<id>/report.json` e `report.md` guardam o resultado. `.la
 
 `deploy` roda o quality gate local, detecta duplicidades e preserva o nome do arquivo remoto que já contém cada regra. Recusa arquivos compartilhados com outras regras. Salva os conteúdos anteriores e hashes em `/var/ossec/backup/detection-engineering/<id>/manifest.json`, com acesso restrito. A validação `wazuh-analysisd -t` precede o reinício; falha durante a instalação tenta restaurar as alterações desta execução.
 
-O `pipeline` executa os fixtures positivos e negativos usando **wazuh-logtest real** após instalar. Falha nessa regressão solicita rollback do backup criado. Já a falta de telemetria no endpoint interrompe a aprovação operacional, sem atribuir automaticamente a falha ao XML instalado.
+O `pipeline` executa os fixtures positivos e negativos após instalar. Para `110130` e `110140`, o replay usa `wazuh-logtest-legacy -c` com uma cópia temporária das regras nativas e locais: somente nessa cópia, a base Windows `60000` é adaptada para o decoder JSON. Isso exercita a árvore Windows, inclusive a regra nativa `92300`, sem editar a configuração ativa nem reiniciar o Manager. A cópia é removida ao sair, inclusive em falha. O binário legacy é necessário porque o cliente `wazuh-logtest` desta versão não aceita configuração isolada; se estiver ausente, a etapa falha. Os demais fixtures continuam no replay JSON direto e não comprovam o caminho EventChannel. Falha nessa regressão solicita rollback do backup criado. Já a falta de telemetria no endpoint interrompe a aprovação operacional, sem atribuir automaticamente a falha ao XML instalado.
 
 Rollback explícito:
 
@@ -186,3 +186,14 @@ O Guest Control confirmou que Kali `eth2` está `UP` com `192.168.56.102/24`, SS
 Para a regra `110130`, uma janela curta de diagnóstico habilitou `logall_json=yes`, gerou a Run Key, confirmou Event ID 13 local e limpeza e observou o evento nos archives. O valor foi restaurado para `logall_json=no` e verificado após reiniciar o Manager. O `full_log` arquivado, submetido diretamente ao `wazuh-logtest`, casou com a regra local. A descoberta foi que o `TargetObject` recebido contém barras invertidas duplicadas; a expressão da regra foi alterada para aceitar uma ou mais. O deploy versionado do conjunto completo criou backup `DE-c608acfdb80e4aa8`; os 11 casos de regressão passaram, incluindo o novo caso positivo com separadores duplicados.
 
 Apesar do replay positivo, as execuções reais posteriores não produziram alerta `110130` em `alerts.json`. Alertas `92200` observados durante as consultas correspondiam ao arquivo do worker que foi temporariamente copiado para `C:\Windows\Temp`, não à alteração da Run Key; não contabilizar como detecção. A simulação Run Key permanece fora da contagem operacional. Investigar a diferença entre o replay do `full_log` e o processamento ao vivo do `analysisd` antes de alterar novamente a regra.
+
+
+### Conclusão de Run Key e conta local — 30/10/2026
+
+As duas validações restantes foram concluídas via Guest Control. `110130` gerou um alerta de nível 12 após Event ID 13; `110140` gerou dois alertas de nível 12 após a tentativa benigna com conta previamente criada e desabilitada. Marcador e agente foram correlacionados no Manager. A Run Key e a conta foram removidas, e uma consulta independente confirmou a ausência de ambas. O total histórico passa a **5/5**; as três primeiras regras não foram reexecutadas nesta etapa.
+
+A causa de `110130` envolvia a árvore de regras: o replay JSON direto contornava o caminho `windows_eventchannel`, e a regra nativa `92300` encerrava a análise do evento real em nível zero. A regra local agora é filha de `61615` e `92300`. A `110140` foi ligada ao grupo `sysmon_event1`. O deploy preservou backup no Manager; seu identificador está em `.lab/current-backup.json`, fora do Git.
+
+O replay de `110130` e `110140` agora usa uma cópia isolada da árvore Windows, adaptando apenas a base dessa cópia para JSON. Os 11 casos passaram no Wazuh. Os 19 testes offline, incluindo preservação da configuração ativa em falha do replay, passaram fora do sandbox; dentro dele, a restrição de arquivos impedia o teste de restauração. Quality gate e sintaxe PowerShell também passaram. O Manager permaneceu ativo com `logall_json=no`.
+
+A diferença entre replay JSON e EventChannel também é descrita no [repositório oficial do Wazuh](https://github.com/wazuh/wazuh/discussions/25405). Aqui, a precedência de `92300` foi reproduzida em cópia isolada e a correção foi confirmada com eventos reais. A confirmação cobre `alerts.json`; a indexação e a visualização no dashboard não foram verificadas nesta etapa.

@@ -86,8 +86,20 @@ try {
             if ((Get-CimInstance Win32_ComputerSystem).DomainRole -ge 4) { throw 'DOMAIN_CONTROLLER_UNSUPPORTED' }
             if (Get-LocalUser -Name $account -ErrorAction SilentlyContinue) { throw 'ACCOUNT_ALREADY_EXISTS' }
             $marker = $account
-            # Password only travels through stdin, never the process command line or report.
+            # Keep the random password out of process arguments and create a disabled account.
             $password = 'aA1!' + [guid]::NewGuid().ToString('N')
+            $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+            $password = $null
+            try {
+                New-LocalUser -Name $account -Password $securePassword -Disabled -AccountNeverExpires `
+                    -PasswordNeverExpires -Description 'Temporary disabled detection engineering test' | Out-Null
+            } finally { $securePassword.Dispose() }
+            $ownsArtifact = $true
+            $created = Get-LocalUser -Name $account
+            if ($created.Enabled) { throw 'ACCOUNT_NOT_DISABLED' }
+
+            # The existing disabled account makes this /add a harmless duplicate-create attempt.
+            # The command line is the telemetry under test; a nonzero net.exe exit is expected.
             $psi = New-Object Diagnostics.ProcessStartInfo
             $psi.FileName = "$env:SystemRoot\System32\net.exe"
             $psi.Arguments = "user $account * /add /active:no"
@@ -98,19 +110,13 @@ try {
             $psi.RedirectStandardError = $true
             $process = New-Object Diagnostics.Process
             $process.StartInfo = $psi
-            $ownsArtifact = $true
             try {
                 [void]$process.Start()
                 $stdout = $process.StandardOutput.ReadToEndAsync()
                 $stderr = $process.StandardError.ReadToEndAsync()
-                $process.StandardInput.WriteLine($password)
-                $process.StandardInput.WriteLine($password)
                 $process.StandardInput.Close()
                 if (-not $process.WaitForExit(10000)) { $process.Kill(); $process.WaitForExit(); throw 'ACCOUNT_COMMAND_TIMEOUT' }
-                if ($process.ExitCode -ne 0) { throw 'ACCOUNT_CREATE_FAILED' }
-                $created = Get-LocalUser -Name $account
-                if ($created.Enabled) { throw 'ACCOUNT_NOT_DISABLED' }
-            } finally { $password = $null; $process.Dispose() }
+            } finally { $process.Dispose() }
         }
         default { throw 'UNKNOWN_SCENARIO' }
     }

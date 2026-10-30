@@ -1,5 +1,6 @@
 <group name="local,windows,attack,">
   <rule id="110130" level="12">
+    <if_sid>61615, 92300</if_sid>
     <field name="win.system.providerName">^Microsoft-Windows-Sysmon$</field>
     <field name="win.system.eventID">^13$</field>
     <field name="win.eventdata.targetObject" type="pcre2">(?i)\\+software\\+microsoft\\+windows\\+currentversion\\+run(?:once)?\\+</field>

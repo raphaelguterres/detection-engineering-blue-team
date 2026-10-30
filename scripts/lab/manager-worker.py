@@ -6,8 +6,11 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 ROOT = Path('/var/ossec')
@@ -165,7 +168,38 @@ def evidence(request):
     return {'ok': True, 'counts': counts, 'levels': levels, 'scan_truncated': truncated}
 
 
-def replay(request):
+@contextmanager
+def windows_replay_config():
+    """Exercise the Windows rule tree with JSON in a disposable copy only."""
+    with tempfile.TemporaryDirectory(prefix='de-replay-', dir=ROOT / 'tmp') as directory:
+        folder = Path(directory)
+        shutil.copytree(ROOT / 'ruleset/rules', folder / 'rules')
+        shutil.copytree(RULES, folder / 'local')
+        base = folder / 'rules/0575-win-base_rules.xml'
+        def adapt(match):
+            body = match[2].replace('<category>ossec</category>', '')
+            if '<decoded_as>windows_eventchannel</decoded_as>' not in body:
+                raise RuntimeError('UNSUPPORTED_WINDOWS_BASE_RULE')
+            return match[1] + body.replace('<decoded_as>windows_eventchannel</decoded_as>',
+                                          '<decoded_as>json</decoded_as>') + match[3]
+        source, count = re.subn(r'(<rule\s+id="60000"[^>]*>)(.*?)(</rule>)',
+                                adapt, base.read_text(), flags=re.S)
+        if count != 1:
+            raise RuntimeError('UNSUPPORTED_WINDOWS_BASE_RULE')
+        base.write_text(source)
+        config = (ROOT / 'etc/ossec.conf').read_text()
+        for original, copy in [('ruleset/rules', 'rules'), ('etc/rules', 'local')]:
+            tag = f'<rule_dir>{original}</rule_dir>'
+            if config.count(tag) != 1:
+                raise RuntimeError('UNSUPPORTED_REPLAY_RULE_DIR')
+            relative = (folder / copy).relative_to(ROOT).as_posix()
+            config = config.replace(tag, f'<rule_dir>{relative}</rule_dir>')
+        path = folder / 'ossec.conf'
+        path.write_text(config)
+        yield path
+
+
+def replay_cases(request, windows_config=None):
     results = []
     for fixture in request['fixtures']:
         for case in fixture['cases']:
@@ -176,7 +210,10 @@ def replay(request):
                 for part in parts[:-1]:
                     branch = branch.setdefault(part, {})
                 branch[parts[-1]] = value
-            proc = subprocess.run([str(ROOT / 'bin/wazuh-logtest')], input=json.dumps(event) + '\n',
+            windows = fixture['rule_id'] in {110130, 110140}
+            args = ([str(ROOT / 'bin/wazuh-logtest-legacy'), '-c', str(windows_config)]
+                    if windows else [str(ROOT / 'bin/wazuh-logtest')])
+            proc = subprocess.run(args, input=json.dumps(event) + '\n',
                                   text=True, capture_output=True, timeout=15)
             output = proc.stdout + proc.stderr
             ids = re.findall(r"\bid:\s*'(\d+)'", output)
@@ -184,8 +221,17 @@ def replay(request):
             decoded = '**Phase 2:' in output and 'No decoder matched' not in output
             healthy = proc.returncode == 0 and decoded and not re.search(r'(?i)error|invalid|will be ignored', output)
             passed = healthy and ((matched == fixture['rule_id']) == case['expected_alert'])
-            results.append({'rule_id': fixture['rule_id'], 'case': case['name'], 'passed': bool(passed), 'matched_rule': matched})
-    return {'ok': all(x['passed'] for x in results), 'cases': results}
+            results.append({'rule_id': fixture['rule_id'], 'case': case['name'], 'passed': bool(passed),
+                            'matched_rule': matched, 'mode': 'isolated_windows_tree' if windows else 'json'})
+    return {'ok': bool(results) and all(x['passed'] for x in results), 'cases': results,
+            'operational_evidence': False}
+
+
+def replay(request):
+    if any(f['rule_id'] in {110130, 110140} for f in request['fixtures']):
+        with windows_replay_config() as config:
+            return replay_cases(request, config)
+    return replay_cases(request)
 
 
 def handle(request):
