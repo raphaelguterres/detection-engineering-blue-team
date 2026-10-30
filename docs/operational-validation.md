@@ -51,13 +51,13 @@ A execução confirma que a criação de tarefa por `schtasks.exe` é correlacio
 
 | Campo | Registro sanitizado |
 | --- | --- |
-| Estado | Telemetria local confirmada; validação ponta a ponta ainda pendente |
+| Estado | Evento recebido e regra corrigida; alerta ao vivo ainda pendente |
 | Regra Wazuh | `110130` |
 | MITRE ATT&CK | `T1547.001` — Registry Run Keys / Startup Folder |
 | Simulação | Valor temporário em `HKCU\...\Run`, removido no mesmo fluxo |
 | Verificação no endpoint | A primeira tentativa não gerou Event ID 13. A configuração Sysmon do laboratório foi atualizada para incluir alterações no caminho Run; a repetição registrou um evento local e confirmou a remoção do valor |
-| Verificação no Manager | A repetição não chegou à etapa de simulação porque SSH e WinRM estavam indisponíveis no preflight mais recente; nenhum alerta correlacionado foi confirmado |
-| Conclusão | A coleta local de Event ID 13 está configurada; falta restabelecer acesso ao Manager e endpoint e confirmar o alerta `110130` |
+| Verificação no Manager | O evento Event ID 13 foi recebido em `archives.json`; o replay do `full_log` real casou com `110130`, mas não foi encontrado alerta `110130` correspondente em `alerts.json` |
+| Conclusão | Corrigida a regex para aceitar separadores duplicados no `TargetObject`, formato observado no evento Wazuh. A regressão e o replay do evento real passam; a geração de alerta em análise ao vivo continua pendente |
 | Limpeza | Valor removido; `logall_json` restaurado para `no` após o diagnóstico |
 
 A regra permanece com fixture de regressão e contrato de rollback, mas não deve ser considerada validada operacionalmente neste laboratório até que um alerta `110130` seja observado no Manager para a nova telemetria.
@@ -83,7 +83,7 @@ A regra permanece com fixture de regressão e contrato de rollback, mas não dev
 
 ## Próxima validação
 
-Restabelecer SSH para o Kali e WinRM para o endpoint; então confirmar o preflight, encaminhamento de Sysmon ao Manager, alerta `110130` e uma execução bem-sucedida e limpa de `110140`.
+Investigar por que o `analysisd` ao vivo não grava `110130` embora o `full_log` arquivado case com a regra no `wazuh-logtest`; depois validar o alerta `110130` e concluir a simulação `110140` com limpeza confirmada.
 
 ## Automação preparada — 28/10/2026
 

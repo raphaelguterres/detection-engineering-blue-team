@@ -2,7 +2,7 @@
   <rule id="110130" level="12">
     <field name="win.system.providerName">^Microsoft-Windows-Sysmon$</field>
     <field name="win.system.eventID">^13$</field>
-    <field name="win.eventdata.targetObject" type="pcre2">(?i)\\software\\microsoft\\windows\\currentversion\\run(?:once)?\\</field>
+    <field name="win.eventdata.targetObject" type="pcre2">(?i)\\+software\\+microsoft\\+windows\\+currentversion\\+run(?:once)?\\+</field>
     <description>Registry Run or RunOnce key modified</description>
     <mitre>
       <id>T1547.001</id>

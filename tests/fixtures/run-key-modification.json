@@ -13,6 +13,17 @@
       }
     },
     {
+      "name": "detects_wazuh_escaped_sysmon_registry_path",
+      "expected_alert": true,
+      "event": {
+        "win.system.providerName": "Microsoft-Windows-Sysmon",
+        "win.system.eventID": "13",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
+        "win.eventdata.targetObject": "HKU\\\\S-1-5-18\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\DetectionEngineeringDemo"
+      }
+    },
+    {
       "name": "does_not_alert_on_unrelated_registry_value",
       "expected_alert": false,
       "event": {
