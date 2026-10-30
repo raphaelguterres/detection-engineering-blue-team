@@ -92,3 +92,7 @@ Na tentativa seguinte, a porta SSH do Kali respondeu, mas a identidade do host n
 O acesso SSH ao Manager foi estabelecido com chave dedicada e host verificado. As cinco regras versionadas foram implantadas e os dez fixtures de regressão passaram no `wazuh-logtest`: cinco positivos casaram com as regras esperadas (`110100`, `110110`, `110120`, `110130`, `110140`) e cinco controles negativos não casaram.
 
 Isso não altera a contagem operacional: **3/5**. As regras `110130` e `110140` continuam sem validação ponta a ponta no Windows. O agente dedicado da VM está registrado como `Never connected`, WinRM não respondeu e a sessão da VM não atualizou pelo Guest Additions. Nenhuma simulação foi executada nessa retomada. O fixture positivo de `110130` confirma apenas o comportamento da regra no Manager; a telemetria Sysmon Event ID 13 ainda precisa ser observada no endpoint.
+
+### Bloqueio de acesso ao endpoint — 29/10/2026
+
+A console agora exibe a tela de login do Windows para `Administrator`; não foram fornecidas nem inseridas credenciais. WinRM, RDP, SSH e SMB estão fechados nos endereços conhecidos. O agente `003` permanece `Never connected`. A contagem segue **3/5**; executar as regras `110130` e `110140` em fixtures ou no Manager não substitui simulação benigna real, evidência Sysmon, alerta correlacionado ao agente e limpeza verificada. Retomar essas duas validações quando o Windows estiver autenticado e o agente conectado.
