@@ -22,13 +22,13 @@ ROOT = HERE.parents[1]
 SCENARIOS = {'powershell': 110100, 'rundll32': 110110, 'schtasks': 110120, 'runkey': 110130, 'localaccount': 110140}
 
 
-def load_config(path):
+def load_config(path, require_windows=True):
     data = json.loads(path.read_text(encoding='utf-8-sig'))
     if data.get('isolated_lab') is not True:
         raise ValueError('isolated_lab must be true')
     if 'REPLACE_' in json.dumps(data):
         raise ValueError('configure the local inventory before connecting')
-    manager, windows = data['manager'], data['windows']
+    manager, windows = data['manager'], data.get('windows')
     if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.@-]*', manager['ssh_target']):
         raise ValueError('invalid SSH target')
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]*', manager['container']):
@@ -37,13 +37,22 @@ def load_config(path):
         raise ValueError('invalid container Python path')
     if not re.fullmatch(r'\d{3,}', manager['agent_id']):
         raise ValueError('invalid Wazuh agent ID')
-    for field in ('computer_name', 'expected_hostname'):
-        if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]*', windows[field]):
-            raise ValueError('invalid Windows identity')
-    if windows.get('authentication') not in ('Negotiate', 'Kerberos'):
-        raise ValueError('only Negotiate/Kerberos authentication is supported')
-    if not isinstance(windows.get('use_ssl'), bool):
-        raise ValueError('use_ssl must be a boolean')
+    for field in ('identity_file', 'known_hosts_file'):
+        if field in manager:
+            candidate = (ROOT / manager[field]).resolve()
+            if not candidate.is_relative_to(ROOT / '.lab') or not candidate.is_file():
+                raise ValueError(f'{field} must reference an existing file under .lab')
+            manager[field] = str(candidate)
+    if require_windows:
+        if not isinstance(windows, dict):
+            raise ValueError('Windows inventory is required for this action')
+        for field in ('computer_name', 'expected_hostname'):
+            if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]*', windows[field]):
+                raise ValueError('invalid Windows identity')
+        if windows.get('authentication') not in ('Negotiate', 'Kerberos'):
+            raise ValueError('only Negotiate/Kerberos authentication is supported')
+        if not isinstance(windows.get('use_ssl'), bool):
+            raise ValueError('use_ssl must be a boolean')
     if not 5 <= data.get('alert_timeout_seconds', 60) <= 300:
         raise ValueError('alert timeout must be between 5 and 300 seconds')
     return data
@@ -75,7 +84,12 @@ def manager_call(config, action, run_id, **fields):
     remote = shlex.join(['docker', 'exec', '-i', m['container'], m['python'], '-c', script])
     args = ['ssh', '-T', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=yes',
             '-o', 'ConnectTimeout=8', '-o', 'ServerAliveInterval=10', '-o', 'ServerAliveCountMax=2',
-            m['ssh_target'], remote]
+            '-o', 'IdentitiesOnly=yes']
+    if m.get('identity_file'):
+        args.extend(['-i', m['identity_file']])
+    if m.get('known_hosts_file'):
+        args.extend(['-o', f"UserKnownHostsFile={m['known_hosts_file']}"])
+    args.extend([m['ssh_target'], remote])
     return run_json(args, payload=json.dumps({'action': action, 'run_id': run_id, **fields}), timeout=240)
 
 
@@ -240,7 +254,7 @@ def main():
     run_id = 'DE-' + uuid.uuid4().hex[:16]
     try:
         args.config = args.config.resolve()
-        config = load_config(args.config)
+        config = load_config(args.config, require_windows=args.action in ('preflight', 'run', 'pipeline', 'cleanup'))
         report = execute(args, config, run_id)
     except (OSError, ValueError, KeyError) as exc:
         print(f'BLOCKED: configuration or local state invalid ({type(exc).__name__}); see docs/lab-automation.md')

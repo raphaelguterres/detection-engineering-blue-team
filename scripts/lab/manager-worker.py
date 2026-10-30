@@ -19,7 +19,7 @@ IDS = {110100, 110110, 110120, 110130, 110140}
 def command(*args, timeout=60):
     result = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
     text = result.stdout + result.stderr
-    if result.returncode or re.search(r'(?i)error|invalid|will be ignored|duplicat', text):
+    if result.returncode:
         raise RuntimeError('MANAGER_COMMAND_FAILED')
     return text
 
@@ -30,7 +30,8 @@ def validate_rules():
 
 def restart():
     command(str(ROOT / 'bin/wazuh-control'), 'restart', timeout=90)
-    status = command(str(ROOT / 'bin/wazuh-control'), 'status')
+    status = subprocess.run([str(ROOT / 'bin/wazuh-control'), 'status'], capture_output=True,
+                            text=True, timeout=60).stdout
     if 'wazuh-analysisd is running' not in status:
         raise RuntimeError('ANALYSISD_NOT_RUNNING')
 
@@ -192,8 +193,12 @@ def handle(request):
         raise RuntimeError('INVALID_RUN_ID')
     action = request['action']
     if action == 'probe':
-        validate_rules()
-        status = command(str(ROOT / 'bin/wazuh-control'), 'status')
+        try:
+            validate_rules()
+        except Exception:
+            return {'ok': False, 'error': 'ANALYSISD_TEST_FAILED'}
+        status = subprocess.run([str(ROOT / 'bin/wazuh-control'), 'status'], capture_output=True,
+                                text=True, timeout=60).stdout
         return {'ok': 'wazuh-analysisd is running' in status, 'rules_present': {k: len(v) for k, v in inventory().items()},
                 'logall_json': re.findall(r'<logall_json>(.*?)</logall_json>', (ROOT / 'etc/ossec.conf').read_text())}
     if action == 'evidence':

@@ -130,3 +130,15 @@ O ID é o da execução principal, presente em `runs` ou `journal`; o executor b
 O GitHub Actions roda o quality gate, testes offline de falhas/correlação/rollback e validação sintática em Windows PowerShell. Não recebe credenciais do lab nem acessa VMs privadas. Os testes mockados não certificam WinRM, Sysmon, compatibilidade do `net user` com stdin, permissões Docker ou comportamento real do Wazuh. Essas verificações permanecem pendentes até uma execução autenticada.
 
 Referências: [Wazuh — regras customizadas](https://documentation.wazuh.com/current/user-manual/ruleset/rules/custom.html), [wazuh-analysisd -t](https://documentation.wazuh.com/current/user-manual/reference/daemons/wazuh-analysisd.html), [Microsoft — Import-Clixml e DPAPI](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/import-clixml).
+
+## Retomada remota — 29/10/2026
+
+O operador autorizou uma chave SSH exclusiva do projeto para acesso sem interação ao Kali. A chave pública foi adicionada a `/home/kali/.ssh/authorized_keys` com a opção OpenSSH `restrict` e origem limitada ao host controlador `192.168.56.1`; não habilita encaminhamentos. A chave privada e o `known_hosts` ficam em `.lab/`, ignorados pelo Git, com ACL privada na chave. A identidade ED25519 foi lida diretamente da VM e conferida antes de configurar `StrictHostKeyChecking=yes`. A autenticação SSH por chave foi confirmada sem prompt.
+
+O executor aceita `manager.identity_file` e `manager.known_hosts_file` locais, restritos a arquivos existentes dentro de `.lab/`. `deploy`, `replay` e `rollback` não exigem inventário WinRM. O template versionado documenta os campos.
+
+O probe encontrou o Manager ativo, as cinco regras sem duplicidade e `logall_json=no`. O deploy `DE-2887c78576864e6f` instalou as cinco regras, salvou backup no Manager, passou por `wazuh-analysisd -t` e reiniciou o serviço. O ID de rollback é `DE-2887c78576864e6f`.
+
+A primeira regressão revelou que os fixtures JSON eram decodificados pelo `wazuh-logtest` como `json`, portanto não recebiam o grupo interno `sysmon_event1`/`sysmon_event_13` exigido pelas regras. As condições foram expressas diretamente pelos campos `win.system.providerName` e `win.system.eventID`, mantendo o escopo Sysmon e permitindo testar os eventos registrados. Após novo deploy, o replay `DE-f89a2766e5e94295` passou nos dez casos: cinco positivos nas regras esperadas e cinco negativos sem match indevido. Os relatórios detalhados permanecem em `.lab/runs/`, ignorado pelo Git.
+
+Esse resultado valida as regras e a regressão no Manager, não a cadeia operacional ponta a ponta. O agente dedicado ao Windows, `003`, consta como `Never connected`; os demais agentes Windows visíveis estão desconectados. O Guest Additions deixou de atualizar o estado da VM Windows, a tela do PowerShell não respondeu e WinRM 5985 não estava acessível. Nenhuma simulação nova foi enviada ao endpoint. A validação operacional continua em 3/5; `110130` e `110140` ainda precisam de evidência real do Windows. `110130` passou no fixture, mas segue bloqueada operacionalmente pela ausência observada de Sysmon Event ID 13.

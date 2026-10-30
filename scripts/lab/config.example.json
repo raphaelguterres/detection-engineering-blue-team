@@ -4,7 +4,9 @@
     "ssh_target": "kali@REPLACE_KALI_HOST",
     "container": "REPLACE_WAZUH_CONTAINER",
     "python": "/var/ossec/framework/python/bin/python3",
-    "agent_id": "REPLACE_AGENT_ID"
+    "agent_id": "REPLACE_AGENT_ID",
+    "identity_file": ".lab/id_ed25519",
+    "known_hosts_file": ".lab/known_hosts"
   },
   "windows": {
     "computer_name": "REPLACE_WINDOWS_HOST",

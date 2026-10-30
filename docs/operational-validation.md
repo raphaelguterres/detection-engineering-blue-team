@@ -86,3 +86,9 @@ O CI da automação foi aprovado no GitHub. Na primeira retomada, ambas as VMs e
 O Kali foi encontrado desbloqueado em uma sessão root, com ambas as VMs em execução. A entrada de texto pelo controle gráfico falhou com `0x80070005` antes da execução da consulta da chave SSH. A automação permanece pendente de autenticação; o total operacional confirmado continua sendo três de cinco detecções.
 
 Na tentativa seguinte, a porta SSH do Kali respondeu, mas a identidade do host não estava no `known_hosts`, então a conexão estrita foi recusada. WinRM no endereço observado do Windows não respondeu. O executor não enviou comandos e nenhuma nova detecção foi validada.
+
+### Atualização — 29/10/2026
+
+O acesso SSH ao Manager foi estabelecido com chave dedicada e host verificado. As cinco regras versionadas foram implantadas e os dez fixtures de regressão passaram no `wazuh-logtest`: cinco positivos casaram com as regras esperadas (`110100`, `110110`, `110120`, `110130`, `110140`) e cinco controles negativos não casaram.
+
+Isso não altera a contagem operacional: **3/5**. As regras `110130` e `110140` continuam sem validação ponta a ponta no Windows. O agente dedicado da VM está registrado como `Never connected`, WinRM não respondeu e a sessão da VM não atualizou pelo Guest Additions. Nenhuma simulação foi executada nessa retomada. O fixture positivo de `110130` confirma apenas o comportamento da regra no Manager; a telemetria Sysmon Event ID 13 ainda precisa ser observada no endpoint.
