@@ -51,16 +51,28 @@ A execução confirma que a criação de tarefa por `schtasks.exe` é correlacio
 
 | Campo | Registro sanitizado |
 | --- | --- |
-| Estado | Bloqueado por pré requisito de telemetria |
+| Estado | Telemetria local confirmada; validação ponta a ponta ainda pendente |
 | Regra Wazuh | `110130` |
 | MITRE ATT&CK | `T1547.001` — Registry Run Keys / Startup Folder |
 | Simulação | Valor temporário em `HKCU\...\Run`, removido no mesmo fluxo |
-| Verificação no endpoint | A criação e a remoção foram concluídas; o Sysmon não registrou Event ID 13 para o teste |
-| Verificação no Manager | Nenhum evento do teste chegou ao arquivo de eventos; nenhum alerta `110130` foi gerado |
-| Conclusão | Habilitar a coleta Sysmon de Event ID 13 antes de repetir a validação |
+| Verificação no endpoint | A primeira tentativa não gerou Event ID 13. A configuração Sysmon do laboratório foi atualizada para incluir alterações no caminho Run; a repetição registrou um evento local e confirmou a remoção do valor |
+| Verificação no Manager | A repetição não chegou à etapa de simulação porque SSH e WinRM estavam indisponíveis no preflight mais recente; nenhum alerta correlacionado foi confirmado |
+| Conclusão | A coleta local de Event ID 13 está configurada; falta restabelecer acesso ao Manager e endpoint e confirmar o alerta `110130` |
 | Limpeza | Valor removido; `logall_json` restaurado para `no` após o diagnóstico |
 
-A regra permanece com fixture de regressão e contrato de rollback, mas não deve ser considerada validada operacionalmente neste laboratório até a telemetria Event ID 13 estar disponível.
+A regra permanece com fixture de regressão e contrato de rollback, mas não deve ser considerada validada operacionalmente neste laboratório até que um alerta `110130` seja observado no Manager para a nova telemetria.
+
+## DET-WIN-LOCALACCOUNT-001 — Tentativa de criação de conta local
+
+| Campo | Registro sanitizado |
+| --- | --- |
+| Estado | Simulação tentada; execução da criação falhou |
+| Regra Wazuh | `110140` |
+| MITRE ATT&CK | `T1136.001` — Create Account: Local Account |
+| Verificação no endpoint | Dois eventos Sysmon Event ID 1 com o marcador foram observados; o usuário temporário não existia após a execução |
+| Verificação no Manager | Nenhum alerta correlacionado foi encontrado; replay do evento em `wazuh-logtest` casou com `110140`, mas isso não comprova encaminhamento operacional |
+| Limpeza | Confirmada; nenhum usuário temporário permaneceu |
+| Conclusão | Não contabilizar como detecção; diagnosticar a falha de criação e restabelecer o transporte ao Manager antes de repetir |
 
 ## Procedimento repetível
 
@@ -71,7 +83,7 @@ A regra permanece com fixture de regressão e contrato de rollback, mas não dev
 
 ## Próxima validação
 
-Validar `DET-WIN-LOCALACCOUNT-001` com uma conta local temporária, sem privilégios e removida no mesmo fluxo, após confirmação explícita do operador.
+Restabelecer SSH para o Kali e WinRM para o endpoint; então confirmar o preflight, encaminhamento de Sysmon ao Manager, alerta `110130` e uma execução bem-sucedida e limpa de `110140`.
 
 ## Automação preparada — 28/10/2026
 

@@ -25,7 +25,15 @@ try {
         $parameters.Credential = $credential
     }
     $result = Invoke-Command @parameters
-    $result | Select-Object * -ExcludeProperty PSComputerName,RunspaceId,PSShowComputerName | ConvertTo-Json -Depth 8 -Compress
+    if ($result -is [System.Collections.IDictionary]) {
+        $clean = [ordered]@{}
+        foreach ($key in $result.Keys) {
+            if ($key -notin @('PSComputerName','RunspaceId','PSShowComputerName')) { $clean[$key] = $result[$key] }
+        }
+        [pscustomobject]$clean | ConvertTo-Json -Depth 8 -Compress
+    } else {
+        $result | Select-Object * -ExcludeProperty PSComputerName,RunspaceId,PSShowComputerName | ConvertTo-Json -Depth 8 -Compress
+    }
 } catch {
     # Error text can contain hostnames, usernames or command lines; keep it local in memory.
     @{ ok = $false; error = 'WINDOWS_REMOTE_FAILED'; category = [string]$_.CategoryInfo.Category } | ConvertTo-Json -Compress
