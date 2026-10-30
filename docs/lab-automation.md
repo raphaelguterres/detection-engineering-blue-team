@@ -174,3 +174,7 @@ Na retomada atual, `preflight` foi bloqueado antes de qualquer simulação: SSH 
 ### Tentativa seguinte — 30/10/2026
 
 Com as VMs informadas como ligadas, o preflight `.lab/runs/DE-7fbdf0c482b74782/report.json` voltou a falhar antes de iniciar cenários. A checagem do host não alcançou Kali SSH em `192.168.56.102:22` nem Windows WinRM em `192.168.56.101:5985`. Nenhuma simulação foi executada. A diferença entre o estado “executando” no VirtualBox e a indisponibilidade de rede indica que falta reconectar/verificar o adaptador host-only ou atualizar os endereços observados das VMs; não alterar inventário até identificar os IPs corretos. A contagem continua **3/5**.
+
+### Diagnóstico VirtualBox — 30/10/2026
+
+A consulta somente leitura ao VirtualBox confirmou o adaptador `VirtualBox Host-Only Ethernet Adapter` ativo (`192.168.56.1/24`, estado `Up`), DHCP do host-only habilitado e ambas as VMs em estado `running`, com cabo conectado na interface host-only. O Guest Additions reporta Kali `192.168.56.102` e Windows Server `192.168.56.101`; ambos coincidem com `.lab/config.json`, portanto não foi necessário trocar IPs nem editar o inventário. Entretanto, ping e conexões TCP para SSH `:22` e WinRM `:5985` falharam, e as entradas ARP dos MACs das VMs permaneceram `Stale`. Não houve alteração de adaptadores ou simulação. O bloqueio está na resposta/rede efetiva dos convidados ou nos serviços; retomar após inspecionar no console das VMs o estado da interface host-only, endereço ativo, rota e serviços SSH/WinRM.
