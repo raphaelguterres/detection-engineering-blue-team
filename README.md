@@ -63,6 +63,10 @@ O [comparador offline Manager ↔ Indexer](docs/phase3-historical-alert-correlat
 
 O [gerador de observações offline](docs/phase3-evidence-handoff.md) transforma as contagens de Manager/Indexer num rascunho aceito pelo validador da Fase 3. O Dashboard permanece **não verificado** até inspeção independente e comprovada do mesmo evento no laboratório.
 
+### Fase 3D — verificação offline em um comando
+
+O [executor PowerShell offline](docs/phase3-one-command-offline.md) encadeia a comparação histórica, geração de observações e classificação, sem acessar as VMs. O CI executa um teste de ponta a ponta **sintético** no Windows. A validação operacional de eventos reais e a confirmação no Dashboard continuam pendentes na Issue #4.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;
