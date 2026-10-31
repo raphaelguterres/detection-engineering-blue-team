@@ -53,6 +53,8 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 
 A [especificação do Dashboard SOC](docs/soc-dashboard-spec.md) define painéis de alertas, severidade, histórico, cobertura MITRE e confirmação do pipeline; a implementação visual depende de verificar dados históricos reais.
 
+O [diário de engenharia](docs/phase3-engineering-journal.md) registra decisões, CI e pendências; o [modelo de evidências sanitizadas](docs/phase3-evidence-template.md) padroniza o relatório sem publicar dados do laboratório.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;
