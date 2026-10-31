@@ -96,6 +96,21 @@ class ObservationDraftTests(unittest.TestCase):
         result = gate.assess(draft.build_observations(data))
         self.assertEqual(result["110130"], "partial")
 
+    def test_symlinked_lab_root_is_rejected(self):
+        """A symlink named .lab must not authorize access to tracked files."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            target = root / "tracked"
+            target.mkdir()
+            redirect = root / ".lab"
+            try:
+                redirect.symlink_to(target, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("symlink creation unavailable")
+            with patch.object(draft, "PRIVATE_DIR", redirect):
+                with self.assertRaisesRegex(ValueError, "symlink"):
+                    draft.private_path(redirect / "evidence.json")
+
     def test_private_path_rejects_public_paths(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
