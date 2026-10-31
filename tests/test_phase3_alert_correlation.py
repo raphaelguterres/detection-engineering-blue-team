@@ -99,6 +99,22 @@ class OfflineAlertCorrelationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             worker.compare(self.manager, self.indexer, "2026-10-30T00:00:00", END)
 
+    def test_symlinked_lab_root_refused(self):
+        """Read-only comparator cannot accept private exports via a linked root."""
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            tracked = root / "tracked"
+            tracked.mkdir()
+            redirect = root / ".lab"
+            try:
+                redirect.symlink_to(tracked, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("symlink creation unavailable")
+            (tracked / "alert.jsonl").write_text("", encoding="utf-8")
+            with patch.object(worker, "PRIVATE_DIR", redirect):
+                with self.assertRaisesRegex(ValueError, "link"):
+                    worker.local_export(redirect / "alert.jsonl")
+
     def test_cli_guard_requires_private_lab_path(self):
         with patch.object(worker, "PRIVATE_DIR", self.root / ".lab"):
             self.manager.write_text("", encoding="utf-8")
