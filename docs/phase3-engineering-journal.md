@@ -23,7 +23,7 @@
 2. Review PR #2 and request a code review before merging.
 3. In the authorized lab, collect aggregate historical evidence for Manager and Indexer with read-only permissions.
 4. Confirm Dashboard visibility using matching time window, rule ID, agent ID and event identity.
-5. Classify each stage as verified, partial or inconclusive; never substitute fixture tests for end-to-end evidence.
+5. Record each stage as found, missing or unknown; classify each rule as verified, partial, inconclusive or not_tested. Never substitute fixture tests for end-to-end evidence.
 
 ### Decision record
 - **ADR-003:** Use pre-existing historical alert records, rather than generating additional events for UI verification.
@@ -32,3 +32,9 @@
 
 ### Change discipline
 Each future PR should include its objective, risk, tests, observed outcomes, rollback considerations and an explicit statement of what was not tested.
+
+### CodeRabbit review remediation — 2026-10-31
+- Correct stage-versus-result terminology, explicit JSON filename and exact detection ID filters.
+- Require same-event correlation in the PASS decision matrix and document unlisted stage combinations.
+- Distinguish not-tested cases from attempted-but-inconclusive evidence, with offline regression tests.
+- Validation: CI results must be verified for the remediation commit before merge; no VM interaction occurred.
