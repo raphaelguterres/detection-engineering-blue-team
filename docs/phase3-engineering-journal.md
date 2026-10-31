@@ -38,3 +38,12 @@ Each future PR should include its objective, risk, tests, observed outcomes, rol
 - Require same-event correlation in the PASS decision matrix and document unlisted stage combinations.
 - Distinguish not-tested cases from attempted-but-inconclusive evidence, with offline regression tests.
 - Validation: CI results must be verified for the remediation commit before merge; no VM interaction occurred.
+
+## 2026-10-31 — Phase 3B: historical identity correlation
+
+- PR #2 merged into `main` at `e4cdbc7f473fa99fae5e60061f577a25caf87a75` following CI #44 success and resolution of all six CodeRabbit threads.
+- Created separate branch `feature/phase3-historical-alert-correlation` for offline comparison of Manager and Indexer historical JSONL exports.
+- Added matching by alert ID + rule ID + agent ID + normalized UTC timestamp, restricted to the five exact detection IDs.
+- Added synthetic unit tests, CI Python compilation check, read-only usage guide, input size limits and privacy protections.
+- No lab connection, credential access, new alert generation or production/dashboard verification is claimed.
+- **Pending:** verify PR CI, review changes, then collect authorized historical exports privately and correlate the same event in Dashboard before marking any end-to-end detection verified.
