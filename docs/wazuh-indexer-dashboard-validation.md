@@ -4,7 +4,7 @@
 
 ## Data path and proof levels
 
-1. **Manager:** a real previously captured `110100`–`110140` alert exists in `/var/ossec/logs/alerts/alerts.json`. This establishes local alert creation only.
+1. **Manager:** a real previously captured the five explicit IDs `110100`, `110110`, `110120`, `110130`, `110140` alert exists in `/var/ossec/logs/alerts/alerts.json`. This establishes local alert creation only.
 2. **Indexer:** the corresponding document is searchable in the relevant `wazuh-alerts-*` index. This establishes ingestion and indexing only.
 3. **Dashboard:** the same historical document can be located in Discover, with matching rule ID, agent ID, and event time. This establishes UI visibility; it does not itself establish correct detection logic.
 
@@ -79,11 +79,15 @@ In the existing Wazuh Dashboard, open Discover or the alerts view and select the
 
 | Manager | Indexer | Dashboard | Conclusion |
 |---|---|---|---|
-| Found | Found | Visible | PASS for the observed historical document |
+| Found | Found | Visible | PASS **only** when `same_event_verified=true` after comparing rule ID, agent ID, timestamp and unique event identity across all three stages; otherwise PARTIAL |
 | Found | Found | Missing | Dashboard data view/timezone/filter/permissions require investigation |
 | Found | Missing | Missing | Investigate Filebeat/shipping, Indexer health, mappings, retention |
 | Missing | Found | Visible | Current Manager log may have rotated; historical document still indexed |
 | Missing | Missing | Missing | INCONCLUSIVE without retention and historical-window evidence |
+| Found | Missing | Visible | PARTIAL; cross-check index permissions, time filters and data view, never infer Indexer failure from one query |
+| Missing | Found | Missing | PARTIAL; compare historical retention and Dashboard filters |
+| Missing | Missing | Visible | PARTIAL; independently reconcile document identity, index pattern and permissions |
+| Any other combination | Any | Any | INCONCLUSIVE pending explicit investigation; no implicit PASS |
 
 ## Reporting
 
