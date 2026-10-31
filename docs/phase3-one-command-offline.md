@@ -9,7 +9,7 @@
    - `.lab/phase3-manager.jsonl` — Manager alerts.
    - `.lab/phase3-indexer.jsonl` — Indexer hits.
 3. Confirm independent provenance of the exports. A copied Manager file is **not** proof of Indexer ingestion, even if the contents match. Do not share credentials, raw event IDs, host addresses, usernames or original exports through GitHub.
-4. On the Windows workstation, ensure `python` resolves to Python 3.12+ and PowerShell is available. Verify `.lab` is a real private directory, not a symlink/junction.
+4. On the Windows workstation, ensure `python` resolves to Python 3.12+ and PowerShell is available. Verify `.lab` is a real private directory, not a symlink/junction. Both offline Python programs refuse junction roots before opening files, including when run directly outside the PowerShell wrapper.
 
 ## Run once (offline)
 
@@ -35,6 +35,6 @@ An operator must still use the authorized Wazuh Dashboard to search for the **sa
 
 ## Test and release criteria
 
-GitHub Actions runs a Windows PowerShell **syntax check and synthetic end-to-end smoke test**, alongside Python tests. The smoke test uses two distinct, locally constructed files with identical synthetic content to prove **software wiring**, not independent SIEM provenance. It runs the command twice and checks that each run creates a new observation file while Dashboard remains unverified.
+GitHub Actions runs a Windows PowerShell **syntax check and synthetic end-to-end smoke test**, plus Windows-specific Python tests that construct a real junction redirecting `.lab/` to an external tracked directory and require refusal, alongside the standard Python tests. The smoke test parses the emitted evidence-gate JSON and requires `partial` for the synthetic rule and zero `verified` classifications. The smoke test uses two distinct, locally constructed files with identical synthetic content to prove **software wiring**, not independent SIEM provenance. It runs the command twice and checks that each run creates a new observation file while Dashboard remains unverified.
 
 The operational readiness issue remains [#4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4). Do not merge this feature until its final CI and code review have been assessed.
