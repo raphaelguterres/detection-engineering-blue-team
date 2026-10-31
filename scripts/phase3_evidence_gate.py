@@ -19,12 +19,20 @@ def assess(data):
             raise ValueError("invalid observation fields")
         if any(item[s] not in VALUES for s in STAGES):
             raise ValueError("stage must be found/missing/unknown")
-        if type(item["inspection_attempted"]) is not bool:\n            raise ValueError("inspection_attempted must be boolean")\n        if type(item["same_event_verified"]) is not bool:
+        if type(item["inspection_attempted"]) is not bool:
+            raise ValueError("inspection_attempted must be boolean")
+        if type(item["same_event_verified"]) is not bool:
             raise ValueError("same_event_verified must be boolean")
         m, i, d = (item[s] for s in STAGES)
-        if not item["inspection_attempted"]:\n            if any(s != "unknown" for s in (m, i, d)) or item["same_event_verified"]:\n                raise ValueError("unattempted inspection cannot claim observations")\n            status = "not_tested"\n        elif m == i == d == "found" and item["same_event_verified"]:
+        if not item["inspection_attempted"]:
+            if any(s != "unknown" for s in (m, i, d)) or item["same_event_verified"]:
+                raise ValueError("unattempted inspection cannot claim observations")
+            status = "not_tested"
+        elif m == i == d == "found" and item["same_event_verified"]:
             status = "verified"
-        elif item["same_event_verified"]:\n            raise ValueError("same-event correlation requires all stages found")\n        elif "found" in (m, i, d):
+        elif item["same_event_verified"]:
+            raise ValueError("same-event correlation requires all stages found")
+        elif "found" in (m, i, d):
             status = "partial"
         else:
             status = "inconclusive"
