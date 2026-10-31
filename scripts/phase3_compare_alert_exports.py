@@ -32,6 +32,8 @@ def utc_datetime(value):
 
 def local_export(path):
     """CLI guard: never read outside the ignored local private directory."""
+    if PRIVATE_DIR.is_symlink() or PRIVATE_DIR.is_junction():
+        raise ValueError("private .lab/ root must not be a link")
     private_root = PRIVATE_DIR.resolve()
     candidate = Path(path).resolve()
     if not candidate.is_relative_to(private_root) or not candidate.is_file():

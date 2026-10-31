@@ -48,14 +48,27 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Parse remote scripts without executing them
         shell: powershell
         run: |
           $failures = @()
-          Get-ChildItem scripts/lab/*.ps1 | ForEach-Object {
+          Get-ChildItem scripts/lab/*.ps1, scripts/phase3-*.ps1, tests/test_phase3_offline_runner.ps1 | ForEach-Object {
             $tokens = $null
             $parseErrors = $null
             [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$parseErrors) | Out-Null
             $failures += $parseErrors
           }
           if ($failures.Count) { $failures | Format-List; exit 1 }
+      - name: Test private-root junction guards on Windows
+        shell: powershell
+        run: |
+          python -m unittest discover -s tests -p 'test_phase3_alert_correlation.py' -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m unittest discover -s tests -p 'test_phase3_observation_draft.py' -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Smoke-test full Phase 3 offline handoff with synthetic data
+        shell: powershell
+        run: .\\tests\\test_phase3_offline_runner.ps1
