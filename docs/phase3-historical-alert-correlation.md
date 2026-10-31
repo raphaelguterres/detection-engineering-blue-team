@@ -11,6 +11,7 @@ An authorized operator must independently obtain two restricted **historical** J
 - `.lab/phase3-manager.jsonl`: one JSON alert from the existing Manager `alerts.json` per line.
 - `.lab/phase3-indexer.jsonl`: one matching historical Indexer hit per line; each line may be a direct alert JSON or a JSON hit with a `_source` object.
 - Both files must use the **same UTC observation window**, and be stored under `.lab/`, which is excluded from Git. Do not upload these files to an issue, PR, chat, or artifact.
+- **Manager and Indexer exports must come from independent sources.** The comparator rejects using the same underlying file twice (including symlink or hardlink aliases). Two separately copied files could still contain the same records: the operator must independently confirm the provenance of each export before interpreting matches.
 - Do not collect credentials, endpoint identifiers, or raw screenshots as part of the repository changes. If the records are no longer retained, mark the inspection *inconclusive* rather than generating new alerts.
 
 This script expects these existing fields in relevant alerts: `id`, `rule.id`, `agent.id`, and `timestamp` (ISO 8601 with timezone). It supports only five explicit detection IDs: `110100`, `110110`, `110120`, `110130`, `110140`. Each indexer entry must represent a single alert rather than a complete search-results envelope.
