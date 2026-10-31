@@ -96,6 +96,26 @@ class ObservationDraftTests(unittest.TestCase):
         result = gate.assess(draft.build_observations(data))
         self.assertEqual(result["110130"], "partial")
 
+    @unittest.skipUnless(__import__("os").name == "nt", "Windows-only junction regression")
+    def test_windows_junction_private_root_refused(self):
+        """A Windows junction must not redirect the ignored evidence root."""
+        import subprocess
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            external = root / "tracked"
+            external.mkdir()
+            redirect = root / ".lab"
+            created = subprocess.run(
+                ["cmd", "/c", "mklink", "/J", str(redirect), str(external)],
+                capture_output=True, check=False,
+            )
+            if created.returncode:
+                self.skipTest("junction creation not permitted by runner")
+            self.assertTrue(redirect.is_junction())
+            with patch.object(draft, "PRIVATE_DIR", redirect):
+                with self.assertRaisesRegex(ValueError, "symlink"):
+                    draft.private_path(redirect / "observations.json")
+
     def test_symlinked_lab_root_is_rejected(self):
         """A symlink named .lab must not authorize access to tracked files."""
         with tempfile.TemporaryDirectory() as temp:
