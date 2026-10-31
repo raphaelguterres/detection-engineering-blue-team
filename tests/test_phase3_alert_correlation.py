@@ -99,6 +99,26 @@ class OfflineAlertCorrelationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             worker.compare(self.manager, self.indexer, "2026-10-30T00:00:00", END)
 
+    @unittest.skipUnless(__import__("os").name == "nt", "Windows-only junction regression")
+    def test_windows_junction_private_root_refused(self):
+        """A Windows junction must not redirect the ignored evidence root."""
+        import subprocess
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            external = root / "tracked"
+            external.mkdir()
+            redirect = root / ".lab"
+            created = subprocess.run(
+                ["cmd", "/c", "mklink", "/J", str(redirect), str(external)],
+                capture_output=True, check=False,
+            )
+            if created.returncode:
+                self.skipTest("junction creation not permitted by runner")
+            self.assertTrue(redirect.is_junction())
+            with patch.object(worker, "PRIVATE_DIR", redirect):
+                with self.assertRaisesRegex(ValueError, "link"):
+                    worker.local_export(redirect / "alert.jsonl")
+
     def test_symlinked_lab_root_refused(self):
         """Read-only comparator cannot accept private exports via a linked root."""
         with tempfile.TemporaryDirectory() as temp:
