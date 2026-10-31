@@ -10,7 +10,7 @@ Show detection coverage and investigate whether existing alerts from five versio
 
 | Panel | Visualization | Data | Interpretation |
 | --- | --- | --- | --- |
-| Alerts by rule | Horizontal bars | Count by `rule.id`, filter to IDs 110100–110140 | Counts within selected historical time window; zero may be retention |
+| Alerts by rule | Horizontal bars | Count by `rule.id`, filter to IDs 110100, 110110, 110120, 110130 and 110140 | Counts within selected historical time window; zero may be retention |
 | Alert timeline | Date histogram | `timestamp` | When alert records were indexed |
 | Severity | Bars or table | `rule.level` | Compare actual severity with rule XML |
 | Agent distribution | Table | `agent.id` aggregated, no identifiers in public exports | Detect cross-agent routing mistakes |
