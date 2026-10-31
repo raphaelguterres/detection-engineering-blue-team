@@ -62,6 +62,13 @@ jobs:
             $failures += $parseErrors
           }
           if ($failures.Count) { $failures | Format-List; exit 1 }
+      - name: Test private-root junction guards on Windows
+        shell: powershell
+        run: |
+          python -m unittest discover -s tests -p 'test_phase3_alert_correlation.py' -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m unittest discover -s tests -p 'test_phase3_observation_draft.py' -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Smoke-test full Phase 3 offline handoff with synthetic data
         shell: powershell
         run: .\\tests\\test_phase3_offline_runner.ps1
