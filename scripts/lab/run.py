@@ -53,8 +53,9 @@ def load_config(path, require_windows=True):
             raise ValueError('only Negotiate/Kerberos authentication is supported')
         if not isinstance(windows.get('use_ssl'), bool):
             raise ValueError('use_ssl must be a boolean')
-    if not 5 <= data.get('alert_timeout_seconds', 60) <= 300:
-        raise ValueError('alert timeout must be between 5 and 300 seconds')
+    alert_timeout = data.get('alert_timeout_seconds', 60)
+    if type(alert_timeout) is not int or not 5 <= alert_timeout <= 300:
+        raise ValueError('alert timeout must be an integer between 5 and 300 seconds')
     return data
 
 
