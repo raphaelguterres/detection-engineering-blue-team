@@ -63,3 +63,13 @@ Each future PR should include its objective, risk, tests, observed outcomes, rol
 - The observation tool now rejects a symlinked private root before path resolution, with a synthetic regression test.
 - The PowerShell handoff uses unique GUID-based filenames for each comparison/draft pair, verifies the comparator's exit code and save operation, and stops before draft creation on failure.
 - CI success for the remediation head must be verified before resolving review threads and merging. Operational SIEM validation remains outstanding under Issue #4.
+
+## 2026-10-31 — Phase 3D: one-command offline workflow
+
+- New branch `feature/phase3-one-command-offline-validation` from the merged Phase 3C `main`.
+- Added `scripts/phase3-run-offline.ps1` to execute comparison → private observation draft → evidence gate in one fail-closed workflow with unique GUID-named outputs.
+- Added `tests/test_phase3_offline_runner.ps1` for Windows Actions smoke validation using synthetic events only; included parser validation and explicit Python 3.12 setup in the Windows CI job.
+- Hardened the existing historical comparator to reject a symlinked `.lab/` root and added a corresponding regression test.
+- Added operator documentation for required existing read-only exports, output privacy boundaries and independent Dashboard validation.
+- No credentials, Wazuh API calls, simulations, service changes or VM access. CI cannot prove any actual event reached the Indexer or Dashboard.
+- **Next gate:** CI + code review before merge; then authorized, local-only review of real historical exports under Issue #4.
