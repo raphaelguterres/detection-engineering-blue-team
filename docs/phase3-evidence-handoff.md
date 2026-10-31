@@ -21,28 +21,37 @@ Use only an authorized lab and existing historical exports. Keep source event fi
 
 First, create the historical aggregate comparison with the [Phase 3B comparator](phase3-historical-alert-correlation.md). Example in PowerShell, with the *actual* historical dates in UTC rather than the illustrative values:
 
+Every execution gets a **new unique comparison and observation filename**. If comparison generation or saving fails, the workflow stops before creating a draft. Run the following block as one unit in PowerShell:
+
 ```powershell
-python scripts/phase3_compare_alert_exports.py `
+$ErrorActionPreference = "Stop"
+if (-not (Test-Path -LiteralPath ".lab" -PathType Container)) {
+  throw "Create the private .lab directory locally before running."
+}
+$runId = [guid]::NewGuid().ToString("N")
+$comparison = ".lab/phase3-comparison-$runId.json"
+$observations = ".lab/phase3-observations-$runId.json"
+
+$jsonLines = & python scripts/phase3_compare_alert_exports.py `
   --manager .lab/phase3-manager.jsonl `
   --indexer .lab/phase3-indexer.jsonl `
   --start-utc 2026-10-30T00:00:00Z `
-  --end-utc 2026-10-31T00:00:00Z |
-  Out-File -FilePath .lab/phase3-comparison.json -Encoding utf8 -NoClobber
+  --end-utc 2026-10-31T00:00:00Z
+if ($LASTEXITCODE -ne 0 -or -not $jsonLines) {
+  throw "Comparison failed; no observation draft will be made."
+}
+$jsonLines | Out-File -LiteralPath $comparison -Encoding utf8 -NoClobber -ErrorAction Stop
+
+& python scripts/phase3_prepare_observations.py `
+  --comparison $comparison `
+  --output $observations
+if ($LASTEXITCODE -ne 0) { throw "Draft creation failed." }
+
+& python scripts/phase3_evidence_gate.py $observations
+if ($LASTEXITCODE -ne 0) { throw "Evidence gate failed." }
 ```
 
-Then generate a **new** observation draft (the tool refuses to overwrite an existing one):
-
-```powershell
-python scripts/phase3_prepare_observations.py `
-  --comparison .lab/phase3-comparison.json `
-  --output .lab/phase3-observations.json
-```
-
-Classify the draft offline:
-
-```powershell
-python scripts/phase3_evidence_gate.py .lab/phase3-observations.json
-```
+Use the **actual** historical UTC time window; the dates above are illustrative. The two new file paths remain paired by the same run ID and are never replaced. Do not run the later commands separately against files from previous runs.
 
 This will only produce `partial` or `inconclusive` outcomes (never `verified`) because Dashboard visibility is not yet checked.
 
