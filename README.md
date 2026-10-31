@@ -47,6 +47,10 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 
 **Distinção importante:** os cinco resultados operacionais históricos estão documentados, mas a execução integrada automatizada do pipeline e a indexação no Dashboard ainda não foram comprovadas. Não execute `pipeline` sem revisar as etapas e aprovar as mudanças remotas.
 
+## Fase 3 — verificação de indexação
+
+[Procedimento somente leitura: Manager → Indexer → Dashboard](docs/wazuh-indexer-dashboard-validation.md). Usa alertas históricos, sem novas simulações; a indexação real ainda precisa ser verificada no laboratório autorizado.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;
