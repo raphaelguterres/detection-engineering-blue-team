@@ -53,7 +53,7 @@ def build_observations(summary):
 
 def private_path(path):
     """Resolve paths and reject anything outside the private .lab/ tree."""
-    if PRIVATE_DIR.is_symlink():
+    if PRIVATE_DIR.is_symlink() or PRIVATE_DIR.is_junction():
         raise ValueError(".lab/ must be a real directory, not a symlink")
     root = PRIVATE_DIR.resolve()
     candidate = Path(path).resolve()
