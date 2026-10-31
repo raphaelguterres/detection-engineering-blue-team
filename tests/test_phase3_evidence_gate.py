@@ -11,27 +11,27 @@ spec.loader.exec_module(gate)
 
 def sample():
     return {r: {"manager": "unknown", "indexer": "unknown", "dashboard": "unknown",
-                "same_event_verified": False} for r in gate.RULE_IDS}
+                "same_event_verified": False, "inspection_attempted": False} for r in gate.RULE_IDS}
 
 
 class EvidenceGateTests(unittest.TestCase):
-    def test_unknown_is_inconclusive_not_failed(self):
-        self.assertTrue(all(v == "inconclusive" for v in gate.assess(sample()).values()))
+    def test_unknown_not_attempted_is_not_tested(self):
+        self.assertTrue(all(v == "not_tested" for v in gate.assess(sample()).values()))
 
     def test_stage_counts_alone_never_mark_verified(self):
         x = sample()
-        x["110130"].update(manager="found", indexer="found", dashboard="found")
+        x["110130"].update(manager="found", indexer="found", dashboard="found", inspection_attempted=True)
         self.assertEqual(gate.assess(x)["110130"], "partial")
 
     def test_correlated_event_is_verified(self):
         x = sample()
         x["110130"].update(manager="found", indexer="found", dashboard="found",
-                           same_event_verified=True)
+                           same_event_verified=True, inspection_attempted=True)
         self.assertEqual(gate.assess(x)["110130"], "verified")
 
     def test_missing_downstream_does_not_claim_success(self):
         x = sample()
-        x["110140"].update(manager="found", indexer="missing", dashboard="missing")
+        x["110140"].update(manager="found", indexer="missing", dashboard="missing", inspection_attempted=True)
         self.assertEqual(gate.assess(x)["110140"], "partial")
 
     def test_reject_partial_schema_and_invalid_status(self):
@@ -44,7 +44,7 @@ class EvidenceGateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             gate.assess(x)
 
-    def test_reject_truthy_string_verification(self):
+    def test_attempted_unknown_is_inconclusive(self):\n        x = sample()\n        x["110100"]["inspection_attempted"] = True\n        self.assertEqual(gate.assess(x)["110100"], "inconclusive")\n\n    def test_unattempted_claim_rejected(self):\n        x = sample()\n        x["110100"]["manager"] = "found"\n        with self.assertRaises(ValueError):\n            gate.assess(x)\n\n    def test_reject_truthy_string_verification(self):
         x = sample()
         x["110100"]["same_event_verified"] = "true"
         with self.assertRaises(ValueError):
