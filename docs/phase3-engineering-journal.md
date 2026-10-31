@@ -49,3 +49,10 @@ Each future PR should include its objective, risk, tests, observed outcomes, rol
 - CodeRabbit review on PR #3 found a **major false-positive risk** if the two inputs refer to the same underlying file. The comparator now rejects self-comparison via `Path.samefile`, and two offline tests cover identical paths and hardlink aliases.
 - Recheck new CI before merging; path identity checks do not substitute for operator verification of independent export provenance (copied files may still contain duplicated records).
 - **Pending:** verify the remediation CI, resolve review findings, then collect authorized historical exports privately and correlate the same event in Dashboard before marking any end-to-end detection verified.
+
+## 2026-10-31 — Phase 3C: sanitized operator handoff
+
+- PR #3 was merged with squash commit `a9e41b28e3bcd44399c929c05bb9d43d471054d6` after CI #49 passed and CodeRabbit's Major self-comparison finding was corrected and resolved.
+- Created `scripts/phase3_prepare_observations.py` to convert private aggregate comparison data into conservative structured evidence drafts: Manager/Indexer found only for positive counts, zero means unknown, Dashboard always unknown, and same_event_verified stays false.
+- Added synthetic tests, CI coverage and `docs/phase3-evidence-handoff.md` with an operator-owned path for independent Dashboard validation.
+- This update involved **no live laboratory inspection**, no credentials and no new simulated events. End-to-end Manager → Indexer → Dashboard verification remains pending in Issue #4.
