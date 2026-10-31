@@ -4,7 +4,7 @@
 
 ## Data path and proof levels
 
-1. **Manager:** a real previously captured the five explicit IDs `110100`, `110110`, `110120`, `110130`, `110140` alert exists in `/var/ossec/logs/alerts/alerts.json`. This establishes local alert creation only.
+1. **Manager:** a previously captured alert from one of the five explicit rules (`110100`, `110110`, `110120`, `110130`, `110140`) exists in `/var/ossec/logs/alerts/alerts.json`. This establishes local alert creation only.
 2. **Indexer:** the corresponding document is searchable in the relevant `wazuh-alerts-*` index. This establishes ingestion and indexing only.
 3. **Dashboard:** the same historical document can be located in Discover, with matching rule ID, agent ID, and event time. This establishes UI visibility; it does not itself establish correct detection logic.
 
@@ -70,6 +70,10 @@ Using the authorized Indexer administration interface with existing **read-only*
 ```
 
 Replace the timestamp placeholders **locally**. The aggregation on `rule.id` may require `rule.id.keyword` depending on the index mapping. An aggregation failure is a mapping issue, **not** evidence of missing alerts. Never use write APIs, index deletion, template changes, broad unbounded dumps, or insecure certificate bypasses.
+
+## Optional offline Manager ↔ Indexer correlation
+
+Use the [Phase 3B historical alert comparator](phase3-historical-alert-correlation.md) on previously exported private JSONL to match the **same alert ID, rule ID, agent ID and UTC timestamp**. A match verifies only these two exports; independent Dashboard inspection is still mandatory.
 
 ## Step D: Dashboard — visual verification
 
