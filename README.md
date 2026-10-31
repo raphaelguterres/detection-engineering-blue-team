@@ -2,6 +2,8 @@
 
 [![Detection quality gate](https://github.com/raphaelguterres/detection-engineering-blue-team/actions/workflows/detection-quality.yml/badge.svg)](https://github.com/raphaelguterres/detection-engineering-blue-team/actions/workflows/detection-quality.yml)
 
+**Status de engenharia e pendências operacionais:** [STATUS.md](STATUS.md) · [Critérios para encerrar a Fase 3 e próximo projeto SOC/IR](docs/phase3-closeout-and-next-project.md).
+
 Repositório de **detection-as-code** focado em engenharia de detecção, separado da infraestrutura de laboratório. Cada detecção é tratada como um produto: regra versionada, cobertura MITRE ATT&CK, evidência, casos de regressão, falsos positivos conhecidos e procedimento de rollback.
 
 > O laboratório que gera telemetria e este repositório são projetos complementares. Adicione aqui o link do projeto de lab: `TODO: link-do-lab`.
