@@ -77,6 +77,20 @@ class OfflineAlertCorrelationTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             worker.compare(self.manager, self.indexer, START, END)
 
+    def test_same_file_cannot_supply_both_stages(self):
+        """Prevent false matches from reusing one export in both roles."""
+        self.write(self.manager, [event()])
+        with self.assertRaisesRegex(ValueError, "distinct files"):
+            worker.compare(self.manager, self.manager, START, END)
+
+    def test_hardlinked_export_cannot_supply_both_stages(self):
+        """Distinct path strings do not guarantee independent export files."""
+        self.write(self.manager, [event()])
+        alias = self.root / "alias-manager.jsonl"
+        alias.hardlink_to(self.manager)
+        with self.assertRaisesRegex(ValueError, "distinct files"):
+            worker.compare(self.manager, alias, START, END)
+
     def test_invalid_time_window_rejected(self):
         self.write(self.manager, [])
         self.write(self.indexer, [])
