@@ -89,3 +89,10 @@ Each future PR should include its objective, risk, tests, observed outcomes, rol
 - Chose a nonduplicate next portfolio direction: `incident-response-soar-lab`, an offline Python case-triage and human-approval project, explicitly separated from existing Threat Hunting and Detection Engineering repositories.
 - Expanded documentation-triggered CI so next status/roadmap updates are quality-gated.
 - No VM access, credentials, simulation or live Wazuh validation performed for this change.
+
+## 2026-10-31 — Evidence-grounded SOC case study consolidation
+
+- Audited existing `docs/operational-validation.md`, architecture, acceptance criteria, Dashboard specification, historical comparison and the Phase 3 runbook without contacting any lab environment.
+- Created `docs/case-study-wazuh-detection-engineering.md`, distinguishing **five historically documented Manager alerts** from unverified same-event Indexer/Dashboard delivery, with per-rule MITRE mapping, telemetry, remediation history, cleanup notes, false-positive considerations and operational acceptance gates.
+- Confirmed the remote workstation was offline at review time; no access to private `.lab/` exports was available. No fresh Manager, Indexer or Dashboard evidence was collected, and no new simulations were run.
+- Kept Issue #4 unresolved because evidence provenance, historical UTC window and independent same-event correlation are still required. No live end-to-end claim is supported yet.
