@@ -44,7 +44,18 @@ class EvidenceGateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             gate.assess(x)
 
-    def test_attempted_unknown_is_inconclusive(self):\n        x = sample()\n        x["110100"]["inspection_attempted"] = True\n        self.assertEqual(gate.assess(x)["110100"], "inconclusive")\n\n    def test_unattempted_claim_rejected(self):\n        x = sample()\n        x["110100"]["manager"] = "found"\n        with self.assertRaises(ValueError):\n            gate.assess(x)\n\n    def test_reject_truthy_string_verification(self):
+    def test_attempted_unknown_is_inconclusive(self):
+        x = sample()
+        x["110100"]["inspection_attempted"] = True
+        self.assertEqual(gate.assess(x)["110100"], "inconclusive")
+
+    def test_unattempted_claim_rejected(self):
+        x = sample()
+        x["110100"]["manager"] = "found"
+        with self.assertRaises(ValueError):
+            gate.assess(x)
+
+    def test_reject_truthy_string_verification(self):
         x = sample()
         x["110100"]["same_event_verified"] = "true"
         with self.assertRaises(ValueError):
