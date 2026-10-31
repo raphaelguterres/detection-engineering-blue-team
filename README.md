@@ -59,6 +59,10 @@ O [diário de engenharia](docs/phase3-engineering-journal.md) registra decisões
 
 O [comparador offline Manager ↔ Indexer](docs/phase3-historical-alert-correlation.md) usa exportações privadas em `.lab/` para comparar o mesmo alerta por ID, regra, agente e timestamp. A ferramenta não se conecta ao Wazuh nem comprova o Dashboard; essa confirmação continua sendo uma etapa operacional separada.
 
+### Fase 3C — entrega de evidências sanitizadas
+
+O [gerador de observações offline](docs/phase3-evidence-handoff.md) transforma as contagens de Manager/Indexer num rascunho aceito pelo validador da Fase 3. O Dashboard permanece **não verificado** até inspeção independente e comprovada do mesmo evento no laboratório.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;
