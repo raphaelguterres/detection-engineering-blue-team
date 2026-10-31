@@ -51,6 +51,8 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 
 [Procedimento somente leitura: Manager → Indexer → Dashboard](docs/wazuh-indexer-dashboard-validation.md). Usa alertas históricos, sem novas simulações; a indexação real ainda precisa ser verificada no laboratório autorizado.
 
+A [especificação do Dashboard SOC](docs/soc-dashboard-spec.md) define painéis de alertas, severidade, histórico, cobertura MITRE e confirmação do pipeline; a implementação visual depende de verificar dados históricos reais.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;
