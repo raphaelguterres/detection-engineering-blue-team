@@ -20,7 +20,7 @@ O Wazuh é a fonte de verdade operacional para alertas, investigação e métric
 
 As simulações benignas são a ponte entre a regra versionada e a validação operacional no Wazuh. Consulte o [contrato de Purple Team seguro](docs/purple-team-safe.md) e use o [modelo de registro de validação](simulations/validation-record-template.md) para registrar hipótese, telemetria esperada, evidência e limpeza sem versionar dados sensíveis.
 
-As validações operacionais sanitizadas estão documentadas em [Validação operacional registrada](docs/operational-validation.md).
+As validações operacionais sanitizadas estão documentadas em [Validação operacional registrada](docs/operational-validation.md). O [estudo de caso técnico consolidado](docs/case-study-wazuh-detection-engineering.md) apresenta as cinco detecções, dificuldades, correções, evidências de engenharia e **o que ainda não foi verificado no Indexer/Dashboard**.
 
 ## Automação remota
 
