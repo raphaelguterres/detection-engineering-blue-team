@@ -55,6 +55,10 @@ A [especificação do Dashboard SOC](docs/soc-dashboard-spec.md) define painéis
 
 O [diário de engenharia](docs/phase3-engineering-journal.md) registra decisões, CI e pendências; o [modelo de evidências sanitizadas](docs/phase3-evidence-template.md) padroniza o relatório sem publicar dados do laboratório.
 
+### Fase 3B — correlação de alertas históricos
+
+O [comparador offline Manager ↔ Indexer](docs/phase3-historical-alert-correlation.md) usa exportações privadas em `.lab/` para comparar o mesmo alerta por ID, regra, agente e timestamp. A ferramenta não se conecta ao Wazuh nem comprova o Dashboard; essa confirmação continua sendo uma etapa operacional separada.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;
