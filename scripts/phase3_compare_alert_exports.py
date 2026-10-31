@@ -89,6 +89,9 @@ def load_records(path, start, end):
 
 
 def compare(manager_file, indexer_file, start_utc, end_utc):
+    """Compare independent exports; reject paths to the same underlying file."""
+    if Path(manager_file).samefile(indexer_file):
+        raise ValueError("Manager and Indexer exports must be distinct files")
     start, end = utc_datetime(start_utc), utc_datetime(end_utc)
     if start > end:
         raise ValueError("start must precede end")
