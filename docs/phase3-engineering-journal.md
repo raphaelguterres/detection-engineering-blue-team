@@ -46,4 +46,6 @@ Each future PR should include its objective, risk, tests, observed outcomes, rol
 - Added matching by alert ID + rule ID + agent ID + normalized UTC timestamp, restricted to the five exact detection IDs.
 - Added synthetic unit tests, CI Python compilation check, read-only usage guide, input size limits and privacy protections.
 - No lab connection, credential access, new alert generation or production/dashboard verification is claimed.
-- **Pending:** verify PR CI, review changes, then collect authorized historical exports privately and correlate the same event in Dashboard before marking any end-to-end detection verified.
+- CodeRabbit review on PR #3 found a **major false-positive risk** if the two inputs refer to the same underlying file. The comparator now rejects self-comparison via `Path.samefile`, and two offline tests cover identical paths and hardlink aliases.
+- Recheck new CI before merging; path identity checks do not substitute for operator verification of independent export provenance (copied files may still contain duplicated records).
+- **Pending:** verify the remediation CI, resolve review findings, then collect authorized historical exports privately and correlate the same event in Dashboard before marking any end-to-end detection verified.
