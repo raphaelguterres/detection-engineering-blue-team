@@ -1,6 +1,6 @@
 # Phase 3B — Historical alert correlation (offline, read-only)
 
-**Status: implemented and under CI review; not run against real Wazuh exports.**
+**Status: implemented and merged into `main` as PR #3 (`a9e41b2`), with CI #49 approved; not run against real Wazuh exports.**
 
 This phase checks whether **the same historical alert** appears in locally exported Manager and Indexer records. It does **not** log into Wazuh, connect to a VM, replay a detection, validate the Dashboard, or alter services. See [Phase 3 architecture](wazuh-indexer-dashboard-validation.md) and [evidence criteria](phase3-evidence-template.md).
 
@@ -63,6 +63,8 @@ python -m unittest discover -s tests -p 'test_phase3_evidence_gate.py' -v
 ```
 
 Record sanitized per-rule counts and conclusions in a local `.lab/phase3-evidence.md`, using the [template](phase3-evidence-template.md). Publish only aggregate counts and scope-limited conclusions when the environment owner authorizes it. The developer may use the **synthetic test fixtures** to validate the comparison tool without ever seeing private exports.
+
+After producing the aggregate comparison, use the [Phase 3C conservative evidence handoff](phase3-evidence-handoff.md) to prepare a local structured draft without claiming Dashboard verification.
 
 ## Acceptance
 
