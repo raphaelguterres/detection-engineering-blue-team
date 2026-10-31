@@ -28,6 +28,18 @@ for ($attempt = 1; $attempt -le 2; $attempt++) {
     if (-not $display.Contains("Dashboard validation: NOT PERFORMED")) {
         throw "Offline run must not claim Dashboard evidence."
     }
+    $jsonStart = $display.IndexOf("{")
+    $jsonEnd = $display.LastIndexOf("}")
+    if ($jsonStart -lt 0 -or $jsonEnd -lt $jsonStart) {
+        throw "Evidence-gate decision JSON was not emitted."
+    }
+    $decision = $display.Substring($jsonStart, $jsonEnd - $jsonStart + 1) | ConvertFrom-Json -ErrorAction Stop
+    if ($decision.phase3_per_rule.'110130' -ne "partial") {
+        throw "Evidence gate must report partial for the synthetic correlated rule."
+    }
+    if (@($decision.phase3_per_rule.PSObject.Properties.Value | Where-Object { $_ -eq "verified" }).Count -ne 0) {
+        throw "No synthetic offline-only rule may be end-to-end verified."
+    }
     $files = @(Get-ChildItem -LiteralPath $lab -Filter "phase3-observations-*.json")
     if ($files.Count -ne $attempt) {
         throw "A new observation file was not generated for this run."
