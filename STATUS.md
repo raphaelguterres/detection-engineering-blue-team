@@ -2,6 +2,8 @@
 
 **Stage:** Phase 3D offline engineering integrated into `main`; **operational Manager → Indexer → Dashboard validation remains pending**.
 
+**Comprehensive case study:** [Wazuh Detection Engineering — historical evidence and operational acceptance](docs/case-study-wazuh-detection-engineering.md). The five Manager detections are recorded historically; no same-event Indexer/Dashboard proof was available at report consolidation. The record is deliberately **open**, not represented as operationally closed.
+
 | Workstream | Status | Evidence |
 | --- | --- | --- |
 | Five Wazuh detection rules | Historical operational detections documented; offline tests passing | [Validation journal](docs/operational-validation.md) |
