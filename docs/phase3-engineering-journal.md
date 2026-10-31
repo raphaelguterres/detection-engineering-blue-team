@@ -80,3 +80,12 @@ Each future PR should include its objective, risk, tests, observed outcomes, rol
 - Added two Python regressions creating actual junctions in a Windows sandbox via `mklink /J`; the Windows CI job now executes those tests in addition to the PowerShell smoke test.
 - Strengthened the smoke test to parse the emitted evidence-gate verdict and assert synthetic Manager/Indexer identity matching is `partial`, never `verified`.
 - No real Wazuh access, credentials, new simulations or service changes. Do not merge before verifying the final CI result.
+
+## 2026-10-31 — Phase 3 closeout plan and next-project decision
+
+- Confirmed PR #6 squash merge into `main` at `77bbe010d81d2d385ce529359f2ef9e656a8cdd0`, after synthetic Windows CI #63 success and resolution of CodeRabbit's Windows junction finding.
+- Created `STATUS.md` and `docs/phase3-closeout-and-next-project.md` to separate completed code-engineering work from unproven operational Manager → Indexer → Dashboard evidence.
+- Reserved all end-to-end validation claims for independently correlated historical alerts; Issue #4 stays open until reviewed evidence is recorded.
+- Chose a nonduplicate next portfolio direction: `incident-response-soar-lab`, an offline Python case-triage and human-approval project, explicitly separated from existing Threat Hunting and Detection Engineering repositories.
+- Expanded documentation-triggered CI so next status/roadmap updates are quality-gated.
+- No VM access, credentials, simulation or live Wazuh validation performed for this change.
