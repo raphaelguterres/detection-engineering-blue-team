@@ -1,6 +1,6 @@
 # Phase 3 — Sanitized evidence record template
 
-Copy to a local ignored `.lab/phase3-evidence.md` before use. **Do not store credentials, internal hostnames, IPs, usernames, raw alerts, event markers or unsanitized screenshots in Git.**
+Copy this Markdown document to a local ignored `.lab/phase3-evidence.md` for narrative notes. Save the JSON block below separately as `.lab/phase3-observations.json` before running the classifier. **Do not store credentials, internal hostnames, IPs, usernames, raw alerts, event markers or unsanitized screenshots in Git.**
 
 ## Scope
 
@@ -14,23 +14,23 @@ Copy to a local ignored `.lab/phase3-evidence.md` before use. **Do not store cre
 
 | Rule ID | Manager | Indexer | Dashboard | Same historical event correlated? | Result |
 | --- | --- | --- | --- | --- | --- |
-| 110100 | unknown | unknown | unknown | no | inconclusive |
-| 110110 | unknown | unknown | unknown | no | inconclusive |
-| 110120 | unknown | unknown | unknown | no | inconclusive |
-| 110130 | unknown | unknown | unknown | no | inconclusive |
-| 110140 | unknown | unknown | unknown | no | inconclusive |
+| 110100 | unknown | unknown | unknown | no | not_tested |
+| 110110 | unknown | unknown | unknown | no | not_tested |
+| 110120 | unknown | unknown | unknown | no | not_tested |
+| 110130 | unknown | unknown | unknown | no | not_tested |
+| 110140 | unknown | unknown | unknown | no | not_tested |
 
-Use only `found`, `missing`, `unknown` for the three stages. `same_event_verified` must be true only when the operator privately cross-checks the matching rule, agent, timestamp and unique event identity in all three stages. Generic aggregate counts **do not** prove the same event was observed.
+Use only `found`, `missing`, `unknown` for the three stages. Set `inspection_attempted` to `true` only after an authorized historical inspection has occurred; otherwise leave it `false`. `same_event_verified` must be true only when the operator privately cross-checks the matching rule, agent, timestamp and unique event identity in all three stages. Generic aggregate counts **do not** prove the same event was observed.
 
 ### Optional sanitized JSON for offline classification
 
 ```json
 {
-  "110100": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false},
-  "110110": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false},
-  "110120": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false},
-  "110130": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false},
-  "110140": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false}
+  "110100": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false,"inspection_attempted":false},
+  "110110": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false,"inspection_attempted":false},
+  "110120": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false,"inspection_attempted":false},
+  "110130": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false,"inspection_attempted":false},
+  "110140": {"manager":"unknown","indexer":"unknown","dashboard":"unknown","same_event_verified":false,"inspection_attempted":false}
 }
 ```
 
