@@ -8,6 +8,9 @@ on:
       - 'tests/**'
       - 'simulations/**'
       - 'scripts/**'
+      - 'docs/**'
+      - 'README.md'
+      - 'STATUS.md'
       - '.github/workflows/**'
   push:
     branches: [main]
