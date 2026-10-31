@@ -32,6 +32,21 @@ Com inventário e autenticação configurados, `python scripts/lab/run.py pipeli
 
 Estado operacional registrado: **5 de 5 detecções com evidência de laboratório**. Run Key (`110130`) e tentativa benigna de criação de conta (`110140`) confirmadas com alertas de nível 12 e limpeza verificada. As três primeiras validações são históricas; as duas últimas foram repetidas após corrigir a árvore de regras Windows. Consulte o registro operacional para distinguir esses resultados dos testes de contrato do CI.
 
+## Validação reproduzível da Fase 2
+
+Para conferir alterações **sem contatar as VMs**, execute:
+
+```powershell
+python scripts/lab/run.py plan
+python scripts/quality_gate.py
+python -m unittest discover -s tests -p 'test_*.py' -v
+```
+
+- [Critérios de aprovação por detecção](docs/detection-acceptance-criteria.md): requisitos de telemetria, regra, severidade, evidência e limpeza.
+- [Roteiro de retomada do Codex](docs/phase2-codex-handoff.md): sequência com preflight, replay e validações isoladas após autorização.
+
+**Distinção importante:** os cinco resultados operacionais históricos estão documentados, mas a execução integrada automatizada do pipeline e a indexação no Dashboard ainda não foram comprovadas. Não execute `pipeline` sem revisar as etapas e aprovar as mudanças remotas.
+
 ## O que existe aqui
 
 - regras locais para Wazuh;
