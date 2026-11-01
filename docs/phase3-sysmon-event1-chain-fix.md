@@ -1,6 +1,6 @@
 # Fase 3 — proposta de correção da hierarquia Sysmon Event ID 1
 
-**Estado:** alteração proposta em branch separada, **não instalada no Manager de produção do laboratório**. O fato de o CI passar não prova que uma regra em execução produziu alerta no Manager/Indexer/Dashboard.
+**Atualização de 01/11/2026:** as três regras corrigidas foram **implantadas no Wazuh Manager do laboratório**, com backup privado e validação sintática; o operador executou novamente os três cenários benignos com eventos Sysmon locais. **A correlação pós-deploy no Manager → Indexer → Dashboard ainda NÃO foi comprovada.** Veja o [checklist de aceitação pós-implantação](phase3-postdeploy-acceptance-20261101.md). O registro abaixo preserva a hipótese e o plano originais, anteriores à implantação.
 
 ## Diagnóstico reproduzido com eventos reais
 
@@ -39,7 +39,7 @@ python3 -m unittest discover -s tests -p 'test_*.py' -v
 
 Esses testes de CI são verificações de **contrato e lógica offline**, não equivalem a uma confirmação real da stack. Após CI, a execução de regressão **com o Wazuh 4.14.9** em configuração descartável será o gate técnico seguinte. Não implantar alterações apenas porque fixtures simuladas passaram.
 
-## Plano de promoção seguro (não executado)
+## Plano de promoção original (histórico; consulte a situação executada no checklist)
 
 1. Validar `main` e o PR (CI aprovado, revisão de diff e CodeRabbit se aplicável). Registrar SHA do commit candidato.
 2. Fazer pré-flight no Manager: `wazuh-analysisd -t`, `wazuh-control status`, inventário dos IDs customizados e hashes SHA-256 dos **cinco** arquivos instalados, sobretudo os três a modificar. Preservar backups **privados**, com permissões restritas e cópias fora do volume ativo.
