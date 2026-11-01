@@ -12,11 +12,11 @@
 | Historical Manager alerts 27–30/10 | **9 real alerts**, 4 rule IDs, read from preserved archives; evidence manifest private | [Operational observations](docs/phase3-real-observations-20261101.md) |
 | Historical Indexer correlation, those 9 alerts | **Not found**: missing indexes for 27–30/10 and 0 hits for five rule IDs in `wazuh-alerts-*` | [Operational observations](docs/phase3-real-observations-20261101.md) |
 | Current Manager → Indexer same-event correlation | **40/40 exact matches** on pre-existing 01/11 events, comparing event ID, rule, agent and timestamp | [Operational observations](docs/phase3-real-observations-20261101.md) |
-| Same-event Dashboard confirmation | **Pending** | [Read-only runbook](docs/wazuh-indexer-dashboard-validation.md) |
+| Same-event Dashboard confirmation, generic real alert | **Confirmed for one rule `5502` event** on 01/11/2026; exact ID, rule, agent and timestamp verified with original Manager event and Dashboard Discover; **not one of the five custom rules** | [Operational observations](docs/phase3-real-observations-20261101.md) |
 | Five-rule end-to-end acceptance | **Not established** | [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) |
 
-**Next action:** preserve the existing historical evidence; investigate the 27–30/10 indexing gap without claiming a root cause; manually verify one of the 40 already indexed recent events in Dashboard Discover by matching identical ID, rule, agent and timestamp. Any historical replay requires a separate approved decision and clear labeling as post-hoc reindexing, **not contemporaneous ingestion**.
+**Next action:** preserve the existing historical evidence; investigate the 27–30/10 indexing gap without claiming a root cause. One real recent alert of rule `5502` has been matched between Manager and Dashboard Discover, confirming generic end-to-end visibility, **not** the five custom rule validations. Any historical replay requires a separate approved decision and clear labeling as post-hoc reindexing, **not contemporaneous ingestion**.
 
 **After this:** build a separate `incident-response-soar-lab` repository for deterministic case triage, audit trails, human-approved response playbooks and dry-run SOAR. See [closeout and next-project plan](docs/phase3-closeout-and-next-project.md).
 
-**Important:** code quality CI and simulated test cases are not operational SIEM evidence. The current 40/40 observation proves only the Manager → Indexer leg for that recent sample, not Dashboard visibility or five-rule end-to-end acceptance.
+**Important:** code quality CI and simulated test cases are not operational SIEM evidence. The current 40/40 observation proves only the Manager → Indexer leg for that recent sample. A separate real `5502` event is visually correlated in Discover, but five-rule end-to-end acceptance remains unestablished.

@@ -68,6 +68,16 @@ No arquivo `alerts.json` corrente, havia **599 eventos de 01/11/2026** no moment
 
 **Conclusão válida:** o fluxo **Manager → Indexer** estava operacional para essa amostra real recente. Isso **não recupera** os nove eventos históricos de 27–30/10 e **não confirma** a identidade desses 40 eventos no Dashboard.
 
+### Confirmação visual independente no Discover — 01/11/2026
+
+O operador forneceu uma captura da interface **Wazuh Dashboard → Discover**, com o índice `wazuh-alerts-*` e eventos reais do dia 01/11, incluindo um evento da regra **`5502`** (PAM: sessão encerrada), agente **`005`**, às **16:12:57.746 (America/Sao_Paulo)**. O registro visível inclui o ID de alerta, a regra, o agente, o timestamp e o nome do índice.
+
+Foi realizada uma **nova pesquisa somente leitura diretamente em `/var/ossec/logs/alerts/alerts.json`** para o ID de alerta exibido na captura. Resultado: **exatamente um** evento, com **ID, `rule.id=5502`, `agent.id=005` e timestamp UTC `2026-11-01T19:12:57.746+0000`** correspondentes ao documento mostrado no Discover (conversão de fuso UTC-03:00).
+
+**Conclusão delimitada:** comprovação de **um mesmo evento real de 01/11 no Manager → Indexer → Dashboard**, usando registro original do Manager e a apresentação de documento no Discover, sem criar novos eventos ou alterar o laboratório. Trata-se da regra operacional **`5502`**, **não** das regras personalizadas `110100`–`110140`. Não confundir esta prova adicional com a amostra independente **40/40 Manager→Indexer** ou com a lacuna histórica de **27–30/10**.
+
+A captura recebida do operador **não é publicada** no GitHub por conter IPs internos e dados de agente. O ID original e a identidade completa permanecem somente no laboratório/conversa do operador; o relatório público registra apenas campos mínimos e conclusão sanitizada.
+
 ## 5. Integridade e custódia das evidências
 
 O manifesto privado, criado no laboratório em 01/11/2026, está em:
@@ -89,9 +99,9 @@ O manifesto **não foi enviado ao GitHub**: permanece privado no laboratório. H
 | Regra `110100`: alerta nesta janela histórica disponível | **Não observado** (há registro anterior) |
 | Os nove eventos 27–30/10 no Indexer pesquisável | **Não localizado** |
 | Manager → Indexer para amostra existente de 01/11 | **Confirmado (40/40)** |
-| Mesmo evento identificado no Dashboard | **Pendente** |
+| Mesmo evento recente identificado no Dashboard | **Confirmado: 1 evento da regra 5502 (não é regra personalizada)** |
 | Validação end-to-end das cinco regras | **Não concluída** |
 
-**Próximas ações:** (1) buscar evidências retrospectivas de saúde do Filebeat/Indexer e de operações de retenção/exclusão de índices, se existentes; (2) identificar na interface Discover um dos **40 eventos já correlacionados** com mesmos ID, regra, agente e timestamp, registrando apenas resultado sanitizado; (3) decidir explicitamente com o operador se eventual reprocessamento histórico será útil, preservando arquivos originais e identificando qualquer dado reindexado como **replay posterior**, jamais como prova de ingestão histórica original; (4) executar o gate de evidências conservador da Fase 3 e manter a Issue #4 aberta enquanto a validação das regras estiver incompleta.
+**Próximas ações:** (1) buscar evidências retrospectivas de saúde do Filebeat/Indexer e de operações de retenção/exclusão de índices, se existentes; (2) manter a comprovação visual do evento recente da regra **5502** como evidência de disponibilidade ponta a ponta **genérica**, distinta da validação das cinco regras; (3) decidir explicitamente com o operador se eventual reprocessamento histórico será útil, preservando arquivos originais e identificando qualquer dado reindexado como **replay posterior**, jamais como prova de ingestão histórica original; (4) executar o gate de evidências conservador da Fase 3 e manter a Issue #4 aberta enquanto a validação das regras estiver incompleta.
 
 **Segurança:** não publicar credenciais, IPs internos, logs brutos, nomes de agentes ou IDs originais. Não executar novas simulações nem alterar o pipeline de produção para forçar um `PASS`.
