@@ -210,7 +210,7 @@ def replay_cases(request, windows_config=None):
                 for part in parts[:-1]:
                     branch = branch.setdefault(part, {})
                 branch[parts[-1]] = value
-            windows = fixture['rule_id'] in {110130, 110140}
+            windows = fixture['rule_id'] in IDS
             args = ([str(ROOT / 'bin/wazuh-logtest-legacy'), '-c', str(windows_config)]
                     if windows else [str(ROOT / 'bin/wazuh-logtest')])
             proc = subprocess.run(args, input=json.dumps(event) + '\n',
@@ -228,7 +228,7 @@ def replay_cases(request, windows_config=None):
 
 
 def replay(request):
-    if any(f['rule_id'] in {110130, 110140} for f in request['fixtures']):
+    if any(f['rule_id'] in IDS for f in request['fixtures']):
         with windows_replay_config() as config:
             return replay_cases(request, config)
     return replay_cases(request)

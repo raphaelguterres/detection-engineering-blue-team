@@ -33,6 +33,8 @@ jobs:
         run: python scripts/quality_gate.py
       - name: Test lab automation offline
         run: python -m unittest discover -s tests -p 'test_lab_automation.py' -v
+      - name: Test Sysmon Event ID 1 rule-chain regression offline
+        run: python -m unittest discover -s tests -p 'test_sysmon_event1_rule_chain.py' -v
       - name: Test executor safety offline
         run: python -m unittest discover -s tests -p 'test_executor_safety.py' -v
       - name: Test transport contracts offline
