@@ -3,6 +3,7 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from contextlib import nullcontext
 from types import SimpleNamespace
 from pathlib import Path
 from unittest.mock import patch
@@ -166,7 +167,8 @@ class ManagerTests(unittest.TestCase):
         request = {'fixtures': [{'rule_id': 110100, 'cases': [
             {'name': 'negative', 'event': {}, 'expected_alert': False}]}]}
         process = SimpleNamespace(returncode=0, stdout='**Phase 2: Completed decoding.\nNo decoder matched.', stderr='')
-        with patch.object(manager.subprocess, 'run', return_value=process):
+        with patch.object(manager.subprocess, 'run', return_value=process), \
+                patch.object(manager, 'windows_replay_config', return_value=nullcontext(Path('isolated.xml'))):
             self.assertFalse(manager.replay(request)['ok'])
 
     def test_windows_replay_keeps_live_rules_and_config_unchanged_on_failure(self):
