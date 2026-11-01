@@ -1,20 +1,22 @@
-# Project status — 2026-10-31
+# Project status — 2026-11-01
 
-**Stage:** Phase 3D offline engineering integrated into `main`; **operational Manager → Indexer → Dashboard validation remains pending**.
+**Stage:** Phase 3 offline engineering integrated into `main`; **live operational evidence partially collected**. The historical five-rule Wazuh Manager detections are documented, but **same-event Manager → Indexer → Dashboard acceptance for all five rules is not established**.
 
-**Comprehensive case study:** [Wazuh Detection Engineering — historical evidence and operational acceptance](docs/case-study-wazuh-detection-engineering.md). The five Manager detections are recorded historically; no same-event Indexer/Dashboard proof was available at report consolidation. The record is deliberately **open**, not represented as operationally closed.
+**New verified operational observations:** [Remote lab inspection, historical preservation and current pipeline correlation — 01/11/2026](docs/phase3-real-observations-20261101.md). **Comprehensive technical case study:** [Wazuh Detection Engineering](docs/case-study-wazuh-detection-engineering.md).
 
 | Workstream | Status | Evidence |
 | --- | --- | --- |
-| Five Wazuh detection rules | Historical operational detections documented; offline tests passing | [Validation journal](docs/operational-validation.md) |
-| Offline Phase 3 engineering | Completed and merged (through PR #6, `77bbe01`) | [Engineering journal](docs/phase3-engineering-journal.md) |
-| Synthetic Windows end-to-end smoke test | CI #63 succeeded (not a live SIEM test) | [GitHub Actions](https://github.com/raphaelguterres/detection-engineering-blue-team/actions/runs/41228763576) |
-| Independent real Manager/Indexer comparison | **Pending** | [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) |
+| Five Wazuh detection rules | Historical Manager detections documented; `110100` not found in inspected 27–30/10 archives | [Operational journal](docs/operational-validation.md) |
+| Offline Phase 3 quality gate | Completed/merged; prior synthetic CI passing, not live SIEM verification | [Engineering journal](docs/phase3-engineering-journal.md) |
+| Wazuh Dashboard administrative access | Recovered and observed by operator on 01/11; Indexer admin authentication HTTP 200 | [Operational observations](docs/phase3-real-observations-20261101.md) |
+| Historical Manager alerts 27–30/10 | **9 real alerts**, 4 rule IDs, read from preserved archives; evidence manifest private | [Operational observations](docs/phase3-real-observations-20261101.md) |
+| Historical Indexer correlation, those 9 alerts | **Not found**: missing indexes for 27–30/10 and 0 hits for five rule IDs in `wazuh-alerts-*` | [Operational observations](docs/phase3-real-observations-20261101.md) |
+| Current Manager → Indexer same-event correlation | **40/40 exact matches** on pre-existing 01/11 events, comparing event ID, rule, agent and timestamp | [Operational observations](docs/phase3-real-observations-20261101.md) |
 | Same-event Dashboard confirmation | **Pending** | [Read-only runbook](docs/wazuh-indexer-dashboard-validation.md) |
-| Five-rule end-to-end acceptance | **Not established** | [Evidence template](docs/phase3-evidence-template.md) |
+| Five-rule end-to-end acceptance | **Not established** | [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) |
 
-**Next action:** have the lab owner authorize read-only historical inspection; select an actual UTC window, privately obtain existing Manager/Indexer exports, run the offline PowerShell workflow and separately confirm identical event identity in Dashboard. No new simulation is required.
+**Next action:** preserve the existing historical evidence; investigate the 27–30/10 indexing gap without claiming a root cause; manually verify one of the 40 already indexed recent events in Dashboard Discover by matching identical ID, rule, agent and timestamp. Any historical replay requires a separate approved decision and clear labeling as post-hoc reindexing, **not contemporaneous ingestion**.
 
 **After this:** build a separate `incident-response-soar-lab` repository for deterministic case triage, audit trails, human-approved response playbooks and dry-run SOAR. See [closeout and next-project plan](docs/phase3-closeout-and-next-project.md).
 
-**Important:** CI validates code behavior and synthetic examples only; no live credentials or VMs were accessed to prepare this status.
+**Important:** code quality CI and simulated test cases are not operational SIEM evidence. The current 40/40 observation proves only the Manager → Indexer leg for that recent sample, not Dashboard visibility or five-rule end-to-end acceptance.
