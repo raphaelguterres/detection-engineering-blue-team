@@ -12,6 +12,7 @@ import collections
 import json
 import re
 import stat
+import sys
 import subprocess
 from pathlib import Path
 
@@ -25,16 +26,19 @@ DECODER_RE = re.compile(r"(?m)^\s*name: '([^']+)'")
 MAX_SAMPLES = 8
 
 
-def markers_from_file(path: Path) -> dict[str, str]:
-    if stat.S_IMODE(path.stat().st_mode) & 0o077:
-        raise ValueError("marker file must be private (chmod 600)")
-    data = json.loads(path.read_text(encoding="utf-8"))
+def validate_markers(data: object) -> dict[str, str]:
     if not isinstance(data, dict) or set(data) != set(EXPECTED):
         raise ValueError("marker file must contain only the three scenario keys")
     for value in data.values():
         if not isinstance(value, str) or not re.fullmatch(r"DE-[a-f0-9]{16}", value):
             raise ValueError("invalid run marker")
     return data
+
+
+def markers_from_file(path: Path) -> dict[str, str]:
+    if stat.S_IMODE(path.stat().st_mode) & 0o077:
+        raise ValueError("marker file must be private (chmod 600)")
+    return validate_markers(json.loads(path.read_text(encoding="utf-8")))
 
 
 def marker_value(scenario: str, run_id: str) -> str:
@@ -147,11 +151,14 @@ def assess(archive: Path, markers: dict[str, str], logtest: str) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--archive", type=Path, required=True)
-    parser.add_argument("--markers", type=Path, required=True, help="private local 0600 JSON")
+    marker_source = parser.add_mutually_exclusive_group(required=True)
+    marker_source.add_argument("--markers", type=Path, help="private local 0600 JSON")
+    marker_source.add_argument("--markers-stdin", action="store_true", help="read private JSON via stdin")
     parser.add_argument("--logtest", default="/var/ossec/bin/wazuh-logtest")
     args = parser.parse_args()
     try:
-        result = assess(args.archive, markers_from_file(args.markers), args.logtest)
+        markers = validate_markers(json.load(sys.stdin)) if args.markers_stdin else markers_from_file(args.markers)
+        result = assess(args.archive, markers, args.logtest)
     except (OSError, ValueError, subprocess.TimeoutExpired) as exc:
         parser.exit(2, f"AUDIT_ERROR={type(exc).__name__}\n")
     print(json.dumps(result, indent=2, sort_keys=True))
