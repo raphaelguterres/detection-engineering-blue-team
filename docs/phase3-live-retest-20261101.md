@@ -50,6 +50,24 @@ Consulta ao Indexer autenticada com certificados administrativos existentes, API
 
 Os arquivos XML das cinco regras já haviam sido verificados, e `wazuh-analysisd -t` terminou com código 0. Isso confirma validade sintática, **não aceitação operacional**.
 
+## Diagnóstico adicional do agente Sysmon (01/11/2026)
+
+**Inspeção somente leitura após o reteste**, diretamente na VM Windows Server pela console administrativa:
+
+1. **Origem Sysmon:** `ossec.conf` do agente Wazuh contém coleta de `Microsoft-Windows-Sysmon/Operational` com `log_format=eventchannel` e **sem `<query>` XPath explícita** para essa entrada. Serviço `WazuhSvc` estava **Running**. Isso descarta somente uma hipótese específica de filtro XPath configurado nessa entrada; **não comprova que todos os eventos foram entregues ao Manager**.
+2. **Evento local de Rundll32:** foi localizado **1 Sysmon Event ID 1** do processo `rundll32.exe`, com marcador único, linha de comando contendo caminho gravável do tipo `\\Users\\`, exatamente na janela da execução autorizada. A regra customizada `110110` não gerou alerta correlacionável nessa janela.
+3. **Eventos locais de Schtasks:** foram localizados **2 Sysmon Event ID 1** para `schtasks.exe` com o marcador da execução, linha de comando contendo `/create`; a regra customizada `110120` não gerou alerta correlacionável nessa janela.
+4. **Alerts do Manager nas janelas temporais:** para o agente de teste, no período do Rundll32 foi observado um alerta **`92213` (Sysmon Event ID 11)** sem o marcador esperado; no período do Schtasks foram observados **`92213` (Event ID 11)** e **`61618` (Event ID 1 de outro processo)**. **Nenhum desses registros pode ser aceito como correlação do cenário**.
+5. **Logs do agente:** além de históricos de desconexão em 31/10, a inicialização do agente em 01/11 contém avisos de **fontes Application, Security e System duplicadas**, e erro de leitura de uma entrada com caminho estilo Linux (`/var/log/wazuh-lab/events.log`) em ambiente Windows. São itens de saneamento de configuração a analisar separadamente; **não há nexo causal demonstrado** com os alertas customizados ausentes.
+
+O diagnóstico inicial de contagem de eventos teve um conflito com a variável automática `$Matches` do PowerShell; o script **foi corrigido e reexecutado**. A inspeção válida confirmou um evento `rundll32` e dois `schtasks` com marcador no Sysmon. Nenhuma modificação em `ossec.conf`, regra, coletor, serviços ou dados do Manager/Indexer foi realizada para esses exames.
+
+### Próximo procedimento recomendado para prova da causa
+
+Antes de editar regras, isolar em uma **janela de reteste autorizada** a passagem de um único evento de cada cenário entre o EventChannel local e o Manager, com identificador único, documentação de configurações efetivamente carregadas, backup do agente/Manager e monitoramento de ingestão. Se necessário, preparar uma **captura temporária e restrita de logs brutos na VM de laboratório**, com revisão de privacidade, limites de duração e restauração de configuração antes de publicar resultados.
+
+Separadamente, investigar o ramo de regras `sysmon_event1`, a precedência frente à regra nativa `92057` e as diferenças entre sessões `wazuh-logtest` e o processo vivo. Os mecanismos `<if_sid>` e `<if_group>` são suportados oficialmente, mas **não devem ser usados como alteração especulativa** sem regressão e plano de rollback. Referências: [Wazuh Rule Syntax](https://documentation.wazuh.com/current/user-manual/ruleset/ruleset-xml-syntax/rules.html), [Wazuh Testing Decoders and Rules](https://documentation.wazuh.com/current/user-manual/ruleset/testing.html).
+
 ## Dashboard e fronteira de evidências
 
 Após a nova rodada, a abertura direta de **Discover** na VM redirecionou para a página de login. Portanto **não foi realizada comprovação visual do mesmo evento customizado** no Dashboard nesta sessão. A comprovação anterior de um evento **genérico `5502`** permanece válida e é independente.
