@@ -39,6 +39,7 @@ class ArchiveAuditTests(unittest.TestCase):
         self.assertEqual(r["custom_rules_in_window"]["110120"], 1)
         self.assertEqual(r["custom_rules_in_window"]["110140"], 0)
         self.assertEqual(r["custom_rules_without_time_filter"]["110140"], 1)
+        self.assertEqual(r["most_frequent_rule_ids"]["92057"], 1)
         output = json.dumps(r)
         for secret in ("PRIVATE-ALERT-ID", "PRIVATE-AGENT-ID", "PRIVATE-COMMAND"):
             self.assertNotIn(secret, output)
