@@ -93,7 +93,7 @@ class ArchiveAuditTests(unittest.TestCase):
     def test_invalid_timestamps_report_only_shapes_not_values(self):
         p = self.dir / "alerts.json"
         value = "UNSUPPORTED_PRIVATE_VALUE"
-        p.write_text(json.dumps(item("110100", value)) + "\\n", encoding="utf-8")
+        p.write_text(json.dumps(item("110100", value)) + "\n", encoding="utf-8")
         r = worker.audit_file(p, START, END)
         self.assertEqual(r["invalid_timestamp_shapes"], {"other": 1})
         self.assertNotIn(value, json.dumps(r))
