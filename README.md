@@ -36,7 +36,7 @@ Cada regra possui metadados, fixtures de regressão, hipótese de detecção, fa
 | Cinco IDs de regras observados no Indexer/Dashboard | **5/5 regras; seis alertas documentados** |
 | Correspondência independente do **mesmo evento** em Manager → Indexer → Dashboard | **Pendente** |
 
-Os [seis alertas observados no Discover](docs/phase3-five-rule-dashboard-evidence-20261102.md) são evidência de indexação e visualização; não são prova, por si só, de correlação ponta a ponta. Uma inspeção manual posterior dos logs do Manager não encontrou alertas das cinco regras na janela consultada; a origem dessa divergência ainda precisa ser investigada, sem reexecutar os cenários.
+Os [seis alertas observados no Discover](docs/phase3-five-rule-dashboard-evidence-20261102.md) são evidência de indexação e visualização; não são prova, por si só, de correlação ponta a ponta. Uma auditoria posterior dos arquivos JSON rotacionados do **Manager localizou os seis alertas originais das cinco regras** (cinco em 01/11 e um em 02/11), mas a primeira leitura não conseguiu interpretar seus timestamps; o [parser foi corrigido](docs/phase3-manager-archive-audit.md), e sua execução sobre os arquivos reais ainda precisa ser confirmada. A correspondência independente dos mesmos IDs entre Manager, Indexer e Dashboard continua pendente.
 
 A conclusão operacional é acompanhada na [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) e no [STATUS.md](STATUS.md). Também existe uma [lacuna histórica de indexação de 27–30/10](docs/phase3-indexing-gap-investigation.md), com causa raiz ainda não comprovada.
 
