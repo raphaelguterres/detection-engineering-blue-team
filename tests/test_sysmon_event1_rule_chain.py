@@ -38,7 +38,7 @@ def matching_predicates(rule, event):
 
 
 class RuleChainTests(unittest.TestCase):
-    def test_all_three_rules_require_the_live_sysmon_event1_group(self):
+    def test_three_rules_anchor_to_live_sysmon_hierarchy(self):
         for rid, (filename, _) in SCENARIOS.items():
             with self.subTest(rule_id=rid):
                 root = ET.parse(ROOT / "rules/windows" / filename).getroot()
@@ -46,8 +46,12 @@ class RuleChainTests(unittest.TestCase):
                 self.assertEqual(len(rules), 1)
                 rule = rules[0]
                 self.assertEqual(rule.attrib["id"], rid)
-                self.assertEqual(rule.findtext("if_group"), "sysmon_event1")
-                self.assertIsNone(rule.find("if_sid"))
+                if rid == "110100":
+                    self.assertIsNone(rule.find("if_group"))
+                    self.assertEqual(rule.findtext("if_sid").replace(" ", ""), "61603,92057")
+                else:
+                    self.assertEqual(rule.findtext("if_group"), "sysmon_event1")
+                    self.assertIsNone(rule.find("if_sid"))
                 self.assertIn("win.system.providerName", [f.get("name") for f in rule.findall("field")])
                 self.assertIn("win.system.eventID", [f.get("name") for f in rule.findall("field")])
                 self.assertTrue(rule.findtext("mitre/id").startswith("T"))
@@ -62,6 +66,15 @@ class RuleChainTests(unittest.TestCase):
             for case in fixture["cases"]:
                 with self.subTest(rule_id=rid, case=case["name"]):
                     self.assertEqual(matching_predicates(rule, case["event"]), case["expected_alert"])
+
+    def test_encoded_powershell_positive_covers_both_parent_processes(self):
+        fixture = json.loads((ROOT / "tests/fixtures/powershell-encoded-command.json").read_text(encoding="utf-8"))
+        parents = {
+            case["event"].get("win.eventdata.parentImage", "").lower().split("\\")[-1]
+            for case in fixture["cases"]
+            if case["expected_alert"]
+        }
+        self.assertEqual(parents, {"cmd.exe", "powershell.exe"})
 
     def test_rules_cannot_match_wrong_provider_or_event_id(self):
         for rid, (xml_name, json_name) in SCENARIOS.items():

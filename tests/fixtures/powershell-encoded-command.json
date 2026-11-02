@@ -10,7 +10,8 @@
         "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
         "win.system.severityValue": "INFORMATION",
         "win.eventdata.image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-        "win.eventdata.commandLine": "powershell.exe -EncodedCommand VwByAGkAdABlAC0ASABvAHMAdAAgAG8AawA="
+        "win.eventdata.commandLine": "powershell.exe -EncodedCommand VwByAGkAdABlAC0ASABvAHMAdAAgAG8AawA=",
+        "win.eventdata.parentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
       }
     },
     {
@@ -22,9 +23,22 @@
         "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
         "win.system.severityValue": "INFORMATION",
         "win.eventdata.image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-        "win.eventdata.commandLine": "powershell.exe -NoProfile -Command Get-Date"
+        "win.eventdata.commandLine": "powershell.exe -NoProfile -Command Get-Date",
+        "win.eventdata.parentImage": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      }
+    },
+    {
+      "name": "detects_encoded_command_non_powershell_parent",
+      "expected_alert": true,
+      "event": {
+        "win.system.providerName": "Microsoft-Windows-Sysmon",
+        "win.system.eventID": "1",
+        "win.system.channel": "Microsoft-Windows-Sysmon/Operational",
+        "win.system.severityValue": "INFORMATION",
+        "win.eventdata.image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "win.eventdata.commandLine": "powershell.exe -EncodedCommand VwByAGkAdABlAC0ASABvAHMAdAAgAG8AawA=",
+        "win.eventdata.parentImage": "C:\\Windows\\System32\\cmd.exe"
       }
     }
   ]
 }
-
