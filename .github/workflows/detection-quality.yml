@@ -45,6 +45,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_phase3_alert_correlation.py' -v
       - name: Validate offline Phase 3 evidence handoff
         run: python -m unittest discover -s tests -p 'test_phase3_observation_draft.py' -v
+      - name: Validate independent Dashboard Discover CSV comparison
+        run: python -m unittest discover -s tests -p 'test_phase3_discover_export.py' -v
       - name: Audit rotated Manager alert files with synthetic fixtures
         run: python -m unittest discover -s tests -p 'test_phase3_manager_archive_audit.py' -v
       - name: Verify planning mode
@@ -75,6 +77,11 @@ jobs:
           python -m unittest discover -s tests -p 'test_phase3_alert_correlation.py' -v
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m unittest discover -s tests -p 'test_phase3_observation_draft.py' -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Test Discover CSV comparison on Windows
+        shell: powershell
+        run: |
+          python -m unittest discover -s tests -p 'test_phase3_discover_export.py' -v
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Smoke-test full Phase 3 offline handoff with synthetic data
         shell: powershell
