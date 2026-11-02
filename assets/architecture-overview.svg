@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="570" viewBox="0 0 1600 570" role="img" aria-labelledby="title description">
+  <title id="title">Detection Engineering Blue Team — arquitetura Windows e Kali Linux</title>
+  <desc id="description">Windows Server com Sysmon e Wazuh Agent envia eventos para o Kali Linux. No Kali, Docker executa Wazuh Manager, Indexer e Dashboard. As cinco regras são versionadas e testadas no GitHub.</desc>
+  <rect width="1600" height="570" fill="#0d1015"/>
+  <g font-family="Arial,Helvetica,sans-serif">
+    <text x="56" y="76" fill="#f7f8fa" font-size="50" font-weight="700">Detection Engineering <tspan fill="#a7c8e5">Blue Team</tspan></text>
+    <text x="58" y="120" fill="#abb4c1" font-size="22">Da telemetria Windows à investigação de alertas no Wazuh</text>
+    <rect x="52" y="170" width="528" height="262" rx="14" fill="#11161d" stroke="#586573" stroke-width="1.5"/>
+    <rect x="623" y="170" width="925" height="262" rx="14" fill="#11161d" stroke="#6487a9" stroke-width="1.5"/>
+    <text x="76" y="211" fill="#d7dde7" font-size="19" font-weight="700" letter-spacing="1.5">ENDPOINT · WINDOWS SERVER</text>
+    <text x="650" y="211" fill="#b5d3ee" font-size="19" font-weight="700" letter-spacing="1.5">KALI LINUX · DOCKER · WAZUH 4.14.9</text>
+    <rect x="76" y="239" width="226" height="150" rx="10" fill="#1b222b" stroke="#455260" stroke-width="1"/>
+    <text x="92" y="281" fill="#f8fafc" font-weight="700" font-size="25">Windows Server</text>
+    <line x1="92" y1="303" x2="286" y2="303" stroke="#394552"/>
+    <text x="92" y="338" fill="#c4ccd8" font-size="20">Sysmon: eventos</text>
+    <rect x="331" y="239" width="226" height="150" rx="10" fill="#1b222b" stroke="#455260" stroke-width="1"/>
+    <text x="347" y="281" fill="#f8fafc" font-weight="700" font-size="25">Wazuh Agent</text>
+    <line x1="347" y1="303" x2="541" y2="303" stroke="#394552"/>
+    <text x="347" y="338" fill="#c4ccd8" font-size="20">Coleta telemetria</text>
+    <rect x="652" y="239" width="272" height="150" rx="10" fill="#1a2938" stroke="#b5d3ee" stroke-width="2"/>
+    <text x="668" y="281" fill="#f8fafc" font-weight="700" font-size="25">Wazuh Manager</text>
+    <line x1="668" y1="303" x2="908" y2="303" stroke="#394552"/>
+    <text x="668" y="338" fill="#c4ccd8" font-size="20">Aplica regras</text>
+    <rect x="947" y="239" width="272" height="150" rx="10" fill="#1b222b" stroke="#455260" stroke-width="1"/>
+    <text x="963" y="281" fill="#f8fafc" font-weight="700" font-size="25">Wazuh Indexer</text>
+    <line x1="963" y1="303" x2="1203" y2="303" stroke="#394552"/>
+    <text x="963" y="338" fill="#c4ccd8" font-size="20">Indexa alertas</text>
+    <rect x="1242" y="239" width="272" height="150" rx="10" fill="#1b222b" stroke="#455260" stroke-width="1"/>
+    <text x="1258" y="281" fill="#f8fafc" font-weight="700" font-size="22">Wazuh Dashboard</text>
+    <line x1="1258" y1="303" x2="1498" y2="303" stroke="#394552"/>
+    <text x="1258" y="338" fill="#c4ccd8" font-size="20">Consulta e investiga</text>
+    <g stroke="#b5d3ee" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 306 314 H 326 M 318 308 L 326 314 L 318 320"/>
+      <path d="M 565 314 H 642 M 634 308 L 642 314 L 634 320"/>
+      <path d="M 927 314 H 943 M 935 308 L 943 314 L 935 320"/>
+      <path d="M 1221 314 H 1238 M 1230 308 L 1238 314 L 1230 320"/>
+    </g>
+    <line x1="56" y1="466" x2="1544" y2="466" stroke="#3e4a58"/>
+    <text x="56" y="500" fill="#b5d3ee" font-weight="700" font-size="17" letter-spacing="1.5">REGRAS VERSIONADAS</text>
+    <text x="56" y="534" fill="#f1f4f8" font-size="22">110100 · 110110 · 110120 · 110130 · 110140</text>
+    <text x="1110" y="500" fill="#b5d3ee" font-weight="700" font-size="17" letter-spacing="1.5">QUALIDADE</text>
+    <text x="1110" y="534" fill="#f1f4f8" font-size="22">Testes + GitHub Actions</text>
+  </g>
+</svg>

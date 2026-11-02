@@ -2,116 +2,70 @@
 
 [![Detection quality gate](https://github.com/raphaelguterres/detection-engineering-blue-team/actions/workflows/detection-quality.yml/badge.svg)](https://github.com/raphaelguterres/detection-engineering-blue-team/actions/workflows/detection-quality.yml)
 
-**Status de engenharia e pendências operacionais:** [STATUS.md](STATUS.md) · [Critérios para encerrar a Fase 3 e próximo projeto SOC/IR](docs/phase3-closeout-and-next-project.md).
+**Detection-as-code com Wazuh 4.14.9:** cinco regras customizadas para Windows, testes automatizados e validação de alertas em um laboratório isolado de SOC/Blue Team.
 
-Repositório de **detection-as-code** focado em engenharia de detecção, separado da infraestrutura de laboratório. Cada detecção é tratada como um produto: regra versionada, cobertura MITRE ATT&CK, evidência, casos de regressão, falsos positivos conhecidos e procedimento de rollback.
+![Arquitetura do laboratório: Windows Server e Sysmon para Wazuh Agent; Kali Linux com Docker, Manager, Indexer e Dashboard](assets/architecture-overview.svg)
 
-> O laboratório que gera telemetria e este repositório são projetos complementares. Adicione aqui o link do projeto de lab: `TODO: link-do-lab`.
+## Como funciona
 
-![Arquitetura de detection-as-code](assets/detection-as-code-architecture.png)
+1. **Windows Server + Sysmon** geram eventos de processos e registro em cenários benignos autorizados.
+2. **Wazuh Agent** coleta a telemetria do endpoint e a envia ao **Wazuh Manager**.
+3. **Kali Linux + Docker** hospedam **Manager → Indexer → Dashboard**: o Manager aplica as detecções; o Indexer armazena os alertas; o Dashboard permite pesquisá-los.
+4. **Este repositório** versiona regras XML, catálogo MITRE ATT&CK, testes positivos/negativos, simulações seguras e procedimentos de validação. O GitHub Actions verifica a qualidade do código — **não substitui a comprovação operacional no SIEM**.
 
-Leia a [arquitetura e o fluxo de promoção](docs/architecture.md) para entender os limites entre o laboratório, a telemetria, o Wazuh e este repositório.
+A infraestrutura do laboratório e os registros reais permanecem separados do código público. Consulte a [arquitetura técnica](docs/architecture.md).
 
-## Operação e cobertura
+## Regras de detecção
 
-O Wazuh é a fonte de verdade operacional para alertas, investigação e métricas ao vivo. Este repositório mantém o código, os testes e as evidências de engenharia que sustentam essa operação. O badge acima mostra o estado atual do pipeline de qualidade no GitHub Actions.
+| ID | O que detecta | MITRE ATT&CK |
+| --- | --- | --- |
+| `110100` | PowerShell com comando codificado | [T1059.001](https://attack.mitre.org/techniques/T1059/001/) |
+| `110110` | Rundll32 carregando DLL de caminho gravável | [T1218.011](https://attack.mitre.org/techniques/T1218/011/) |
+| `110120` | Criação de tarefa via schtasks | [T1053.005](https://attack.mitre.org/techniques/T1053/005/) |
+| `110130` | Modificação de Registry Run Key | [T1547.001](https://attack.mitre.org/techniques/T1547/001/) |
+| `110140` | Criação de conta local com net.exe | [T1136.001](https://attack.mitre.org/techniques/T1136/001/) |
 
-## Purple Team seguro
+Cada regra possui metadados, fixtures de regressão, hipótese de detecção, falsos positivos e orientações de rollback no [catálogo](catalog/detections.yaml).
 
-As simulações benignas são a ponte entre a regra versionada e a validação operacional no Wazuh. Consulte o [contrato de Purple Team seguro](docs/purple-team-safe.md) e use o [modelo de registro de validação](simulations/validation-record-template.md) para registrar hipótese, telemetria esperada, evidência e limpeza sem versionar dados sensíveis.
+## Estado da Fase 3
 
-A [investigação da lacuna de indexação de 27–30/10](docs/phase3-indexing-gap-investigation.md) registra o diagnóstico do Filebeat, avisos históricos de rede/DNS do Docker e a ausência de causa raiz comprovada. O [reteste controlado das cinco regras](docs/phase3-live-retest-20261101.md) confirma **5/5 execuções locais com Sysmon e limpeza**, mas apenas **2/5 regras customizadas com o mesmo evento correlacionado no Manager e no Indexer**; ainda não há 5/5 no Dashboard. As [evidências reais coletadas em 01/11/2026](docs/phase3-real-observations-20261101.md) documentam a amostra recente Manager → Indexer (**40/40**), os **9 alertas históricos** preservados no Manager e a lacuna de indexação de 27–30/10, sem declarar a validação das cinco regras concluída. As validações operacionais sanitizadas estão documentadas em [Validação operacional registrada](docs/operational-validation.md). O [estudo de caso técnico consolidado](docs/case-study-wazuh-detection-engineering.md) apresenta as cinco detecções, dificuldades, correções, evidências de engenharia e **o que ainda não foi verificado no Indexer/Dashboard**.
+| Validação | Situação |
+| --- | --- |
+| Cinco regras versionadas e quality gate | **Concluído** |
+| Regressões em árvore isolada do Wazuh 4.14.9 | **12/12 aprovadas** |
+| Cinco IDs de regras observados no Indexer/Dashboard | **5/5 regras; seis alertas documentados** |
+| Correspondência independente do **mesmo evento** em Manager → Indexer → Dashboard | **Pendente** |
 
-## Automação remota
+Os [seis alertas observados no Discover](docs/phase3-five-rule-dashboard-evidence-20261102.md) são evidência de indexação e visualização; não são prova, por si só, de correlação ponta a ponta. Uma inspeção manual posterior dos logs do Manager não encontrou alertas das cinco regras na janela consultada; a origem dessa divergência ainda precisa ser investigada, sem reexecutar os cenários.
 
-O [executor do laboratório](docs/lab-automation.md) coordena SSH/Docker no Kali e WinRM no Windows: verificação inicial, instalação de regras com backup, regressão no Wazuh, simulações benignas, coleta de evidência e limpeza. O plano pode ser consultado sem conexão:
+A conclusão operacional é acompanhada na [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) e no [STATUS.md](STATUS.md). Também existe uma [lacuna histórica de indexação de 27–30/10](docs/phase3-indexing-gap-investigation.md), com causa raiz ainda não comprovada.
+
+## Como validar localmente (sem acessar as VMs)
+
+Requisitos: **Python 3.11+** e PowerShell para o fluxo opcional de evidências.
 
 ```powershell
-python scripts/lab/run.py plan
-```
-
-Com inventário e autenticação configurados, `python scripts/lab/run.py pipeline` executa a sequência. Relatórios e credenciais ficam fora do Git. A automação foi testada localmente; a primeira execução autenticada nas VMs ainda está pendente.
-
-Estado operacional registrado: **5 de 5 detecções com evidência de laboratório**. Run Key (`110130`) e tentativa benigna de criação de conta (`110140`) confirmadas com alertas de nível 12 e limpeza verificada. As três primeiras validações são históricas; as duas últimas foram repetidas após corrigir a árvore de regras Windows. Consulte o registro operacional para distinguir esses resultados dos testes de contrato do CI.
-
-## Validação reproduzível da Fase 2
-
-Para conferir alterações **sem contatar as VMs**, execute:
-
-```powershell
-python scripts/lab/run.py plan
 python scripts/quality_gate.py
-python -m unittest discover -s tests -p 'test_*.py' -v
+python -m unittest discover -s tests -q
+python scripts/lab/run.py plan
 ```
 
-- [Critérios de aprovação por detecção](docs/detection-acceptance-criteria.md): requisitos de telemetria, regra, severidade, evidência e limpeza.
-- [Roteiro de retomada do Codex](docs/phase2-codex-handoff.md): sequência com preflight, replay e validações isoladas após autorização.
+O comando `plan` não executa ações remotas. A implantação de regras e as simulações dependem de autorização e dos procedimentos descritos em [Automação do laboratório](docs/lab-automation.md) e [Purple Team seguro](docs/purple-team-safe.md).
 
-**Distinção importante:** os cinco resultados operacionais históricos estão documentados, mas a execução integrada automatizada do pipeline e a indexação no Dashboard ainda não foram comprovadas. Não execute `pipeline` sem revisar as etapas e aprovar as mudanças remotas.
+Para comparar **exportações reais e independentes** do Manager e do Indexer, use o [procedimento offline da Fase 3](docs/phase3-one-command-offline.md). Os arquivos originais ficam somente em `.lab/` (ignorado pelo Git), e a conferência do mesmo documento no Dashboard é feita separadamente.
 
-## Fase 3 — verificação de indexação
-
-[Procedimento somente leitura: Manager → Indexer → Dashboard](docs/wazuh-indexer-dashboard-validation.md). Usa alertas históricos, sem novas simulações; a indexação real ainda precisa ser verificada no laboratório autorizado.
-
-A [especificação do Dashboard SOC](docs/soc-dashboard-spec.md) define painéis de alertas, severidade, histórico, cobertura MITRE e confirmação do pipeline; a implementação visual depende de verificar dados históricos reais.
-
-O [diário de engenharia](docs/phase3-engineering-journal.md) registra decisões, CI e pendências; o [modelo de evidências sanitizadas](docs/phase3-evidence-template.md) padroniza o relatório sem publicar dados do laboratório.
-
-### Fase 3B — correlação de alertas históricos
-
-O [comparador offline Manager ↔ Indexer](docs/phase3-historical-alert-correlation.md) usa exportações privadas em `.lab/` para comparar o mesmo alerta por ID, regra, agente e timestamp. A ferramenta não se conecta ao Wazuh nem comprova o Dashboard; essa confirmação continua sendo uma etapa operacional separada.
-
-### Fase 3C — entrega de evidências sanitizadas
-
-O [gerador de observações offline](docs/phase3-evidence-handoff.md) transforma as contagens de Manager/Indexer num rascunho aceito pelo validador da Fase 3. O Dashboard permanece **não verificado** até inspeção independente e comprovada do mesmo evento no laboratório.
-
-### Fase 3D — verificação offline em um comando
-
-O [executor PowerShell offline](docs/phase3-one-command-offline.md) encadeia a comparação histórica, geração de observações e classificação, sem acessar as VMs. O CI executa um teste de ponta a ponta **sintético** no Windows. A validação operacional de eventos reais e a confirmação no Dashboard continuam pendentes na Issue #4.
-
-## O que existe aqui
-
-- regras locais para Wazuh;
-- catálogo pesquisável por técnica MITRE;
-- fixtures de eventos maliciosos e benignos;
-- quality gate executável localmente e no GitHub Actions;
-- simulações estritamente benignas e reproduzíveis.
-
-## Estrutura
+## Estrutura do repositório
 
 ```text
-catalog/             metadados das detecções e sua cobertura ATT&CK
-rules/               regras XML prontas para importar no Wazuh
-tests/fixtures/      eventos e expectativas de regressão
-simulations/         procedimentos seguros que produzem a telemetria
-scripts/             validações sem dependências externas
-.github/workflows/   quality gate de CI
+catalog/              Detecções e mapeamento MITRE ATT&CK
+rules/windows/        Regras XML Wazuh
+tests/fixtures/       Casos positivos e benignos
+simulations/windows/  Cenários controlados e limpeza
+scripts/              Quality gate, comparação e automação
+docs/                 Arquitetura, evidências e decisões
+.github/workflows/    Integração contínua
 ```
 
-## Início rápido
+**Leitura técnica:** [Estudo de caso](docs/case-study-wazuh-detection-engineering.md) · [Critérios de aceitação](docs/detection-acceptance-criteria.md) · [Diário de engenharia](docs/phase3-engineering-journal.md) · [Roteiro pós-Fase 3](docs/phase3-closeout-and-next-project.md).
 
-1. Copie as regras de `rules/windows/` para o diretório de regras locais do manager Wazuh (normalmente `/var/ossec/etc/rules/`).
-2. Reinicie o serviço do manager e confirme que os IDs não entram em conflito com regras existentes.
-3. Execute os testes de contrato antes de promover uma alteração:
-
-```powershell
-python scripts/quality_gate.py
-```
-
-O gate valida IDs únicos, campos mínimos de qualidade, arquivos referenciados, XML bem-formado, cobertura MITRE, testes de regressão e contratos de validação Purple Team. Isso não substitui a execução das regras em um manager Wazuh real; essa validação operacional está documentada em cada simulação.
-
-## Convenções
-
-- IDs deste projeto: `110100–110199` (separados das regras do laboratório).
-- Todo item do catálogo exige técnica ATT&CK, severidade, fonte de dados, evidência, owner e rollback.
-- Toda regra exige ao menos um caso de detecção e um caso benigno que **não** deve alertar.
-- Não inclua credenciais, malware, payloads ofensivos ou telemetria real de clientes.
-
-## Referências
-
-- [MITRE ATT&CK – T1059.001 PowerShell](https://attack.mitre.org/techniques/T1059/001/)
-- [MITRE ATT&CK – T1053.005 Scheduled Task](https://attack.mitre.org/techniques/T1053/005/)
-- [MITRE ATT&CK – T1547.001 Run Keys / Startup Folder](https://attack.mitre.org/techniques/T1547/001/)
-- [MITRE ATT&CK – T1136.001 Local Account](https://attack.mitre.org/techniques/T1136/001/)
-- [Wazuh – regras customizadas](https://documentation.wazuh.com/current/user-manual/ruleset/rules/custom.html)
-
+> **Segurança:** este repositório não contém credenciais, logs brutos, identificadores de endpoints ou dados de clientes. Sucesso no CI não deve ser apresentado como evidência de alerta real ou de resposta a incidente.
