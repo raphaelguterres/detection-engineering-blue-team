@@ -1,6 +1,6 @@
 # Estudo de caso — Detection Engineering e validação Wazuh no laboratório Blue Team
 
-> **Status em 31/10/2026: relatório técnico consolidado com resultados históricos do Manager.** A engenharia offline está aprovada; a correlação comprovada dos mesmos eventos no **Indexer e Dashboard ainda não foi executada/confirmada**. Este documento não constitui um relatório de validação operacional ponta a ponta.
+> **Atualização de 02/11/2026:** a verificação operacional ponta a ponta está **concluída para seis alertas originais de cinco regras personalizadas na janela UTC de 01–02/11**. O comparador confirmou **6/6 identidades iguais no Manager, Indexer e Dashboard Discover**. A redação das seções históricas de 31/10 foi mantida com indicação temporal. Consulte o [aceite final sanitizado](phase3-final-three-stage-six-event-acceptance-20261102.md).
 
 ## 1. Resumo executivo
 
@@ -10,7 +10,7 @@ O repositório contém **cinco registros históricos de detecções operacionais
 
 Os instrumentos offline de comparação Manager ↔ Indexer, criação de rascunhos sanitizados e quality gate foram integrados por PRs sucessivos. O teste integrado no Windows concluiu com sucesso no **CI #63 usando dados sintéticos**. O CI comprova apenas o comportamento do software de teste, nunca indexação real.
 
-**Resultado comprovado pelo material do repositório:** cinco detecções históricas documentadas no Manager. **Resultado ainda sem comprovação:** que um mesmo alerta histórico de cada regra existe no Indexer e aparece no Dashboard.
+**Resultados da consolidação original em 31/10:** cinco detecções históricas documentadas no Manager, sem confirmação independente das identidades em Indexer/Discover naquela data. **Atualização posterior em 02/11:** seis eventos originais das cinco regras foram comprovados nas três fontes; veja o [aceite final](phase3-final-three-stage-six-event-acceptance-20261102.md).
 
 ## 2. Escopo, arquitetura e limites
 
@@ -95,9 +95,9 @@ A disciplina de engenharia inclui critérios de aprovação por regra, fixtures 
 
 Em especial, o [CI #63](https://github.com/raphaelguterres/detection-engineering-blue-team/actions/runs/41228763576) registrou sucesso dos testes de contratos e do fluxo offline Windows com eventos **sintéticos**, incluindo proteção contra junctions. O [CI #65](https://github.com/raphaelguterres/detection-engineering-blue-team/actions/runs/41229243101) aprovou o PR de documentação. Nenhum deles é uma medição de latência de detecção, retenção ou entrega de eventos no Indexer.
 
-## 6. Verificação operacional final — **pendente de dados reais**
+## 6. Plano original de verificação operacional — concluído posteriormente
 
-Antes de declarar a integração operacional validada, um operador autorizado precisa:
+Em 31/10, antes da coleta final realizada em 02/11, o plano de validação exigia:
 
 1. Selecionar a janela UTC real dos alertas históricos, verificando rotação e retenção dos índices.
 2. Confirmar, com permissões somente leitura, os mesmos registros em `/var/ossec/logs/alerts/alerts.json` (ou arquivos históricos correspondentes) e no índice `wazuh-alerts-*`.
@@ -107,9 +107,9 @@ Antes de declarar a integração operacional validada, um operador autorizado pr
 6. Preencher o [modelo sanitizado](phase3-evidence-template.md) e classificar **cada regra** com o gate. Um evento ausente por retenção é **inconclusivo**, não prova falha de ingestão.
 7. Publicar **somente** a decisão sanitizada, escopo, método e limites; não publicar IDs, logs brutos, credenciais, screenshots não tratados ou dados do endpoint.
 
-**Referência central:** [Issue #4 — evidência operacional pendente](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4).
+**Rastreabilidade:** [Issue #4 — gate de evidência operacional](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4). O aceite final posterior está em [relatório de 02/11](phase3-final-three-stage-six-event-acceptance-20261102.md).
 
-### Matriz de aceitação atual (nenhuma conclusão inventada)
+### Matriz histórica em 31/10 (antes da coleta da Fase 3)
 
 | Regra | Manager — registro histórico | Indexer — mesma identidade | Dashboard — mesma identidade | Estado ponta a ponta |
 | --- | --- | --- | --- | --- |
@@ -121,6 +121,20 @@ Antes de declarar a integração operacional validada, um operador autorizado pr
 
 **Critério para “1 detecção end-to-end validada”:** o mesmo alerta identificado no Manager, Indexer e Dashboard, com evidência independente das três observações. Para declarar **5/5**, aplicar esse critério separadamente a todas as cinco regras.
 
+### Aceite operacional concluído em 02/11/2026
+
+Na janela UTC `2026-11-01T20:00:00Z`–`2026-11-02T00:40:00Z`, os seis documentos originais foram conferidos **independentemente** no Manager, no Indexer e **individualmente na interface Dashboard Discover**. A própria interface disponibilizou o JSON expandido dos seis eventos, com `id`, `rule.id`, `agent.id` e timestamp original. O operador remoto autorizado projetou apenas esses quatro campos para arquivo privado e executou o comparador offline. A cópia CSV do Reporting não possuía timestamp e foi excluída da validação temporal.
+
+| Regra | Alertas exatos Manager ↔ Indexer ↔ Discover | Estado |
+| --- | ---: | --- |
+| `110100` | 1/1 | **Verified** |
+| `110110` | 1/1 | **Verified** |
+| `110120` | 1/1 | **Verified** |
+| `110130` | 1/1 | **Verified** |
+| `110140` | 2/2 | **Verified** |
+
+**Total: 6/6 eventos, 5/5 regras, código 0 no comparador offline.** Essa comprovação é restrita à janela e às execuções benignas do laboratório. [Metodologia e limites do aceite](phase3-final-three-stage-six-event-acceptance-20261102.md).
+
 ## 7. Falsos positivos, métricas e riscos residuais
 
 - **PowerShell:** automações administrativas e instalações legítimas também podem usar comandos codificados. Revisar contexto da linha de comando e exceções.
@@ -131,13 +145,13 @@ Antes de declarar a integração operacional validada, um operador autorizado pr
 
 **Métricas não apuradas:** taxa de falsos positivos real, TTD/MTTD, TTR/MTTR, porcentagem de ingestão no Indexer, tempo de indexação, disponibilidade do Dashboard e cobertura de todas as variações ATT&CK. Não apresentar métricas simuladas como resultados operacionais.
 
-**Riscos residuais:** dependência de retenção histórica; acessos indisponíveis no momento da consolidação; diferenças de timestamp/mapeamento; provenance das exportações; ausência de correlação documental no Dashboard.
+**Riscos residuais:** retenção histórica e limites de evidência; alertas de laboratório não são incidentes de produção; a lacuna de indexação de 27–30/10 permanece sem causa raiz comprovada. A procedência da amostra de 01–02/11 está registrada no aceite final.
 
 ## 8. Conclusão publicável e condição de encerramento
 
-> Foram desenvolvidas e versionadas cinco detecções de segurança Windows com Sysmon e Wazuh, cobrindo PowerShell, Rundll32, tarefas agendadas, persistência por Run Key e tentativa de criação de conta. O projeto inclui registros históricos de alertas no Wazuh Manager, testes positivos e benignos, CI, revisão de regras e um fluxo offline para correlação e documentação de evidências. A confirmação da mesma identidade do alerta no Indexer e Dashboard permanece pendente, portanto o SIEM ainda não é apresentado como validado ponta a ponta.
+> Foram desenvolvidas e versionadas cinco detecções de segurança Windows com Sysmon e Wazuh, cobrindo PowerShell, Rundll32, tarefas agendadas, persistência por Run Key e tentativa de criação de conta. O projeto inclui testes positivos e benignos, CI, revisão de regras e validação operacional de seis alertas originais em um laboratório isolado. Os mesmos seis alertas foram correlacionados por identidade exata no Manager, Indexer e Dashboard Discover (**6/6 eventos, 5/5 regras**), com evidências privadas e resultados agregados documentados. A verificação é limitada à janela UTC de 01–02/11/2026 e não demonstra resposta a incidentes reais nem soluciona a lacuna histórica de indexação de 27–30/10.
 
-**Critério de encerramento:** somente atualizar a conclusão acima, marcar a Issue #4 como resolvida ou divulgar “end-to-end validado” **após** a verificação operacional real e revisão do material sanitizado. O relatório não deve ser alterado para criar evidência retrospectiva inexistente.
+**Critério de encerramento satisfeito para a amostra delimitada de seis alertas:** exportações originais separadas de Manager/Indexer, seis documentos inspecionados diretamente no Discover autenticado, identidade e horário UTC iguais para todos, saída offline 6/6 e registro público sanitizado. A Issue #4 pode ser fechada por `completed` após o merge da documentação, sem afirmar resolução da investigação histórica 27–30/10.
 
 ### Fontes internas de rastreabilidade
 
