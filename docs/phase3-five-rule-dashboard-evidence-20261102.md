@@ -1,5 +1,8 @@
 # Fase 3 — cinco regras personalizadas visíveis no Wazuh Discover
 
+
+> **Atualização posterior (02/11/2026):** esta página registra a **inspeção inicial** do Discover, quando a comparação com os IDs originais do Manager ainda estava pendente. A verificação final foi executada separadamente: **6/6 documentos originais coincidiram por ID, regra, agente e timestamp UTC entre Manager, Indexer e Discover**, conforme o [relatório de aceite final](phase3-final-three-stage-six-event-acceptance-20261102.md). As pendências descritas abaixo são históricas e não representam o estado atual da Fase 3.
+
 **Janela de verificação:** 01/11/2026 na VM Windows Server; a última atualização de PowerShell ocorreu em **02/11/2026 00:22 UTC**. **Escopo do resultado:** eventos benignos reais, alertas indexados e visíveis no Dashboard. A comparação independente do mesmo ID com o arquivo do Manager **continua pendente para os eventos pós-deploy**.
 
 ## Evidências operacionais reais
