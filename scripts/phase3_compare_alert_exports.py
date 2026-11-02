@@ -10,12 +10,24 @@ import json
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+import stat
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE_DIR = ROOT / ".lab"
 RULE_IDS = ("110100", "110110", "110120", "110130", "110140")
 MAX_BYTES = 32 * 1024 * 1024
 MAX_LINES = 250_000
+
+
+def private_root_is_link(path):
+    """Reject symlinks and Windows junctions on Python 3.11+ without following them."""
+    if path.is_symlink():
+        return True
+    try:
+        attributes = getattr(path.lstat(), "st_file_attributes", 0)
+    except FileNotFoundError:
+        return False
+    return bool(attributes & getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0))
 
 
 def utc_datetime(value):
@@ -32,7 +44,7 @@ def utc_datetime(value):
 
 def local_export(path):
     """CLI guard: never read outside the ignored local private directory."""
-    if PRIVATE_DIR.is_symlink() or PRIVATE_DIR.is_junction():
+    if private_root_is_link(PRIVATE_DIR):
         raise ValueError("private .lab/ root must not be a link")
     private_root = PRIVATE_DIR.resolve()
     candidate = Path(path).resolve()

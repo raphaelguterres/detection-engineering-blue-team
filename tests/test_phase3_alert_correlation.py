@@ -114,7 +114,8 @@ class OfflineAlertCorrelationTests(unittest.TestCase):
             )
             if created.returncode:
                 self.skipTest("junction creation not permitted by runner")
-            self.assertTrue(redirect.is_junction())
+            import stat
+            self.assertTrue(redirect.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
             with patch.object(worker, "PRIVATE_DIR", redirect):
                 with self.assertRaisesRegex(ValueError, "link"):
                     worker.local_export(redirect / "alert.jsonl")
