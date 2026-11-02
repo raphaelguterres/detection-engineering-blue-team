@@ -4,6 +4,19 @@
 
 Este script **não exporta alertas**, não faz conexão, não acessa credenciais e não promove a fase a `verified`. Sua saída contém somente nomes de arquivo, contagens por ID de regra e limites de timestamps UTC.
 
+## Resultado observado no Manager (02/11/2026)
+
+Auditoria executada **pelo operador dentro do contêiner** sobre os dois arquivos originais:
+
+| Fonte | Linhas JSON válidas | Regras personalizadas identificadas sem filtro UTC |
+| --- | ---: | --- |
+| `ossec-alerts-01.json.gz` | 1.307 | `110110`: 1; `110120`: 1; `110130`: 1; `110140`: 2 |
+| `ossec-alerts-02.json` | 371 | `110100`: 1 |
+
+**Resultado: seis alertas do Manager, cinco regras distintas.** Não houve JSON inválido nesses arquivos (`invalid_json_or_object=0`). A primeira versão da ferramenta rejeitou os timestamps de todos os seis eventos (`missing_or_invalid_timestamp_for_target_rule=5+1`) e, por isso, `custom_rules_in_window=0`, sem que isso signifique ausência dos alertas. O [PR #24](https://github.com/raphaelguterres/detection-engineering-blue-team/pull/24) adicionou parsing de offsets compactos do Wazuh (`+0000`/`-0800`) compatível com Python antigo e um diagnóstico por *tipo de formato* sem publicar datas brutas. **Ainda é necessário executar essa versão corrigida no contêiner** para confirmar o formato real.
+
+Isso fortalece as evidências no **Manager**, mas **não comprova** correspondência exata de `id`, regra, agente e timestamp com os documentos do Indexer e Dashboard. A Fase 3 permanece aberta.
+
 ## Fontes observadas no laboratório
 
 A listagem realizada pelo operador dentro do contêiner Wazuh Manager 4.14.9 registrou:
