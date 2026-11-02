@@ -35,11 +35,11 @@ Cada regra possui metadados, fixtures de regressão, hipótese de detecção, fa
 | Regressões em árvore isolada do Wazuh 4.14.9 | **12/12 aprovadas** |
 | Cinco IDs de regras observados no Indexer/Dashboard | **5/5 regras; seis alertas documentados** |
 | Identidade exata Manager → Indexer (seis alertas, cinco regras) | **6/6 correlacionados — concluído** |
-| Identidade dos mesmos alertas na interface Dashboard Discover | **Pendente — aceite final** |
+| Identidade exata Manager → Indexer → Dashboard Discover | **6/6 eventos / 5/5 regras — concluído** |
 
-Os [seis alertas observados no Discover](docs/phase3-five-rule-dashboard-evidence-20261102.md) são evidência de indexação e visualização; não são prova, por si só, de correlação ponta a ponta. Uma auditoria dos arquivos rotacionados do **Manager confirmou os seis alertas originais das cinco regras** (cinco em 01/11 e um em 02/11), **todos dentro da janela UTC 01/11 20h–02/11 00h40**. Após a [correção do parser](docs/phase3-manager-archive-audit.md), os seis timestamps coincidem até os milissegundos com as observações registradas no Discover. A [comparação independente concluída](docs/phase3-manager-indexer-exact-correlation-20261102.md) confirmou **6/6 identidades exatas** entre Manager e Indexer (`id`, regra, agente e instante UTC). Falta somente a conferência separada desses mesmos documentos na interface **Discover** do Dashboard.
+Uma auditoria dos arquivos rotacionados do **Manager** confirmou os seis alertas originais das cinco regras (cinco em 01/11 e um em 02/11) na janela UTC 01/11 20h–02/11 00h40. A [comparação Manager–Indexer](docs/phase3-manager-indexer-exact-correlation-20261102.md) encontrou **6/6 identidades exatas**. A [validação final independente no Dashboard Discover](docs/phase3-final-three-stage-six-event-acceptance-20261102.md) conferiu individualmente os seis documentos pela aba JSON da interface autenticada, preservando somente `id`, `rule.id`, `agent.id` e timestamp original. **Resultado operacional: 6/6 correspondências exatas nas três etapas, abrangendo as cinco regras.** O relatório CSV gerado pelo menu Reporting não incluía timestamps e **não** foi utilizado como fonte de horário; a projeção privada foi feita diretamente dos JSONs disponibilizados no Discover.
 
-A conclusão operacional é acompanhada na [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) e no [STATUS.md](STATUS.md). Também existe uma [lacuna histórica de indexação de 27–30/10](docs/phase3-indexing-gap-investigation.md), com causa raiz ainda não comprovada.
+O aceite da Fase 3 está registrado na [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) e no [STATUS.md](STATUS.md). A [lacuna histórica de indexação de 27–30/10](docs/phase3-indexing-gap-investigation.md) permanece uma investigação **separada**, sem causa raiz comprovada.
 
 ## Como validar localmente (sem acessar as VMs)
 
@@ -53,7 +53,7 @@ python scripts/lab/run.py plan
 
 O comando `plan` não executa ações remotas. A implantação de regras e as simulações dependem de autorização e dos procedimentos descritos em [Automação do laboratório](docs/lab-automation.md) e [Purple Team seguro](docs/purple-team-safe.md).
 
-Para comparar **exportações reais e independentes** do Manager e do Indexer, use o [procedimento offline da Fase 3](docs/phase3-one-command-offline.md). Os arquivos originais ficam somente em `.lab/` (ignorado pelo Git), e a conferência do mesmo documento no Dashboard é feita separadamente.
+Para reproduzir as validações, consulte o [procedimento offline da Fase 3](docs/phase3-one-command-offline.md), o [comparador Discover](docs/phase3-discover-csv-acceptance.md) e o [relatório de aceite final](docs/phase3-final-three-stage-six-event-acceptance-20261102.md). Os documentos e os registros originais permanecem privados em `.lab/` (ignorado pelo Git).
 
 ## Estrutura do repositório
 
