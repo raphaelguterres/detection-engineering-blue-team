@@ -4,6 +4,7 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -60,6 +61,42 @@ class ArchiveAuditTests(unittest.TestCase):
         self.assertEqual(r["missing_or_invalid_timestamp_for_target_rule"], 1)
         self.assertEqual(r["custom_rules_without_time_filter"]["110100"], 1)
         self.assertEqual(r["custom_rules_in_window"]["110100"], 0)
+
+    def test_compatibility_when_fromisoformat_rejects_compact_offsets(self):
+        """Emulate older Python's stricter fromisoformat behavior."""
+        real_datetime = datetime
+
+        class OldDatetime:
+            strptime = staticmethod(real_datetime.strptime)
+
+            @staticmethod
+            def fromisoformat(_value):
+                raise ValueError("compact offsets unsupported")
+
+        with patch.object(worker, "datetime", OldDatetime):
+            self.assertEqual(worker.parse_utc(
+                "2026-11-01T23:19:45.738+0000"),
+                datetime(2026, 11, 1, 23, 19, 45, 738000, timezone.utc))
+            self.assertEqual(worker.parse_utc(
+                "2026-11-01T15:19:45-0800"),
+                datetime(2026, 11, 1, 23, 19, 45, tzinfo=timezone.utc))
+
+    def test_redacted_timestamp_diagnostic(self):
+        self.assertEqual(worker.timestamp_shape("2026-11-01T23:19:45+0000"),
+                         "compact_timezone_offset")
+        self.assertEqual(worker.timestamp_shape(None), "missing")
+        self.assertEqual(worker.timestamp_shape(123), "non_string")
+        self.assertEqual(worker.timestamp_shape("2026-11-01T23:19:45Z"), "utc_z")
+        self.assertEqual(worker.timestamp_shape("2026-11-01T23:19:45+00:00"),
+                         "colon_timezone_offset")
+
+    def test_invalid_timestamps_report_only_shapes_not_values(self):
+        p = self.dir / "alerts.json"
+        value = "UNSUPPORTED_PRIVATE_VALUE"
+        p.write_text(json.dumps(item("110100", value)) + "\\n", encoding="utf-8")
+        r = worker.audit_file(p, START, END)
+        self.assertEqual(r["invalid_timestamp_shapes"], {"other": 1})
+        self.assertNotIn(value, json.dumps(r))
 
     def test_refuse_missing_file(self):
         with self.assertRaises(ValueError):
