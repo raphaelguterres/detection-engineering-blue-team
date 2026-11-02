@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="520" viewBox="0 0 1600 520" role="img" aria-labelledby="title description">
+  <title id="title">Detection Engineering Blue Team — arquitetura do laboratório Wazuh</title>
+  <desc id="description">Windows e Sysmon geram eventos, o Wazuh Agent coleta, o Manager aplica regras, o Indexer armazena alertas, e o Dashboard permite investigá-los. Cinco detecções versionadas e testadas no CI.</desc>
+  <rect width="1600" height="520" fill="#0b0e12"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="56" y="80" fill="#f8fafc" font-size="52" font-weight="700">Detection Engineering <tspan fill="#94c8ff">Blue Team</tspan></text>
+    <text x="57" y="122" fill="#adb6c2" font-size="23">Telemetria, regras, alertas e investigação — laboratório Wazuh</text>
+    <rect x="56" y="182" width="268" height="176" rx="12" fill="#12171e" stroke="#46515f" stroke-width="1.5"/>
+    <text x="78" y="216" fill="#8595a8" font-size="16" letter-spacing="2" font-weight="700">01</text>
+    <text x="78" y="270" fill="#f8fafc" font-size="26" font-weight="700">Windows + Sysmon</text>
+    <line x1="78" y1="293" x2="301" y2="293" stroke="#303b48" stroke-width="1"/>
+    <text x="78" y="322" fill="#c1c9d4" font-size="18">Gera eventos</text>
+    <rect x="361" y="182" width="268" height="176" rx="12" fill="#12171e" stroke="#46515f" stroke-width="1.5"/>
+    <text x="383" y="216" fill="#8595a8" font-size="16" letter-spacing="2" font-weight="700">02</text>
+    <text x="383" y="270" fill="#f8fafc" font-size="26" font-weight="700">Wazuh Agent</text>
+    <line x1="383" y1="293" x2="606" y2="293" stroke="#303b48" stroke-width="1"/>
+    <text x="383" y="322" fill="#c1c9d4" font-size="18">Coleta telemetria</text>
+    <rect x="666" y="182" width="268" height="176" rx="12" fill="#131e2b" stroke="#94c8ff" stroke-width="2.5"/>
+    <text x="688" y="216" fill="#94c8ff" font-size="16" letter-spacing="2" font-weight="700">03</text>
+    <text x="688" y="270" fill="#f8fafc" font-size="26" font-weight="700">Wazuh Manager</text>
+    <line x1="688" y1="293" x2="911" y2="293" stroke="#303b48" stroke-width="1"/>
+    <text x="688" y="322" fill="#c1c9d4" font-size="16">Aplica regras de detecção</text>
+    <rect x="971" y="182" width="268" height="176" rx="12" fill="#12171e" stroke="#46515f" stroke-width="1.5"/>
+    <text x="993" y="216" fill="#8595a8" font-size="16" letter-spacing="2" font-weight="700">04</text>
+    <text x="993" y="270" fill="#f8fafc" font-size="26" font-weight="700">Wazuh Indexer</text>
+    <line x1="993" y1="293" x2="1216" y2="293" stroke="#303b48" stroke-width="1"/>
+    <text x="993" y="322" fill="#c1c9d4" font-size="16">Armazena e indexa alertas</text>
+    <rect x="1276" y="182" width="268" height="176" rx="12" fill="#12171e" stroke="#46515f" stroke-width="1.5"/>
+    <text x="1298" y="216" fill="#8595a8" font-size="16" letter-spacing="2" font-weight="700">05</text>
+    <text x="1298" y="270" fill="#f8fafc" font-size="26" font-weight="700">Wazuh Dashboard</text>
+    <line x1="1298" y1="293" x2="1521" y2="293" stroke="#303b48" stroke-width="1"/>
+    <text x="1298" y="322" fill="#c1c9d4" font-size="18">Consulta e investiga</text>
+    <path d="M 331 267 H 344 M 338 260 L 345 267 L 338 274" fill="none" stroke="#94c8ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 636 267 H 649 M 643 260 L 650 267 L 643 274" fill="none" stroke="#94c8ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 941 267 H 954 M 948 260 L 955 267 L 948 274" fill="none" stroke="#94c8ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 1246 267 H 1259 M 1253 260 L 1260 267 L 1253 274" fill="none" stroke="#94c8ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="56" y1="414" x2="1544" y2="414" stroke="#46515f" stroke-width="1"/>
+    <text x="56" y="453" fill="#94c8ff" font-size="17" font-weight="700" letter-spacing="1.5">DETECTION AS CODE</text>
+    <text x="56" y="486" fill="#f1f5f9" font-size="20">110100 · 110110 · 110120 · 110130 · 110140</text>
+    <text x="1210" y="453" fill="#94c8ff" font-size="17" font-weight="700" letter-spacing="1.5">CI / QUALITY GATE</text>
+    <text x="1210" y="486" fill="#d1d9e3" font-size="20">Testes + revisão</text>
+  </g>
+</svg>
