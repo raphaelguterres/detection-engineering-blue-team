@@ -43,17 +43,23 @@ class ArchiveAuditorTests(unittest.TestCase):
         self.marker_path.write_text(json.dumps(self.markers), encoding="utf-8")
         os.chmod(self.marker_path, 0o600)
 
+    @unittest.skipIf(os.name == "nt", "POSIX mode 0600 cannot be verified via Windows ACLs")
     def test_private_markers_are_accepted(self):
         self.assertEqual(auditor.markers_from_file(self.marker_path), self.markers)
 
+    @unittest.skipIf(os.name == "nt", "POSIX mode 0644 cannot be verified via Windows ACLs")
     def test_reject_world_readable_marker_file(self):
         os.chmod(self.marker_path, 0o644)
         with self.assertRaises(ValueError):
             auditor.markers_from_file(self.marker_path)
 
     def test_reject_bad_marker_schema(self):
-        self.marker_path.write_text(json.dumps({"powershell": "DE-1111111111111111"}))
         with self.assertRaises(ValueError):
+            auditor.validate_markers({"powershell": "DE-1111111111111111"})
+
+    @unittest.skipUnless(os.name == "nt", "Windows-specific fail-closed test")
+    def test_windows_disk_marker_input_is_rejected(self):
+        with self.assertRaisesRegex(ValueError, "privacy cannot be verified"):
             auditor.markers_from_file(self.marker_path)
 
     def test_archive_filter_only_sysmon_process_event(self):
@@ -97,9 +103,8 @@ class ArchiveAuditorTests(unittest.TestCase):
 
     def test_invalid_markers_are_rejected_without_leaking(self):
         self.markers["rundll32"] = "TEST_SECRET"
-        self.marker_path.write_text(json.dumps(self.markers))
         with self.assertRaises(ValueError) as err:
-            auditor.markers_from_file(self.marker_path)
+            auditor.validate_markers(self.markers)
         self.assertNotIn("TEST_SECRET", str(err.exception))
 
 

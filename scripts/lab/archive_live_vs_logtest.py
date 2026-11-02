@@ -10,6 +10,7 @@ import argparse
 import base64
 import collections
 import json
+import os
 import re
 import stat
 import sys
@@ -36,6 +37,10 @@ def validate_markers(data: object) -> dict[str, str]:
 
 
 def markers_from_file(path: Path) -> dict[str, str]:
+    if os.name == "nt":
+        # Python's POSIX mode bits do not authenticate Windows ACL privacy.
+        # Refuse disk-backed marker input; authorized callers may use --markers-stdin.
+        raise ValueError("marker file privacy cannot be verified on Windows; use stdin")
     if stat.S_IMODE(path.stat().st_mode) & 0o077:
         raise ValueError("marker file must be private (chmod 600)")
     return validate_markers(json.loads(path.read_text(encoding="utf-8")))
