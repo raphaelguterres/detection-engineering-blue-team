@@ -38,3 +38,9 @@ O script lê **somente** os arquivos ignorados pelo Git: Manager, Indexer e CSV 
 O milestone **M0** em [roadmap do perfil](https://github.com/raphaelguterres/raphaelguterres/blob/main/roadmaps/PROGRESSO.md) e a Issue #4 só podem ser encerrados **após** a confirmação independente da origem e das seis identidades. A lacuna histórica de 27–30/10 continua fora desse aceite.
 
 > Referência: [OpenSearch — Exportar dados do Discover](https://docs.opensearch.org/latest/dashboards/exporting-data/).
+
+## Atualização de 02/11/2026 — alternativa usada quando o Reporting omite timestamps
+
+Na verificação final, o menu autenticado **Reporting → Generate CSV** do Discover retornou seis linhas, mas **sem a coluna de timestamp**. A aceitação **não** utilizou o horário do Manager/Indexer para completar esse relatório. Em vez disso, o operador remoto abriu **cada um dos seis documentos na aba JSON do próprio Discover** (busca salva `PHASE3_DISCOVER_SIX_ALERTS_20261102`) e copiou somente para a área privada os campos `id`, `rule.id`, `agent.id` e `timestamp` do JSON original. A projeção CSV de identidade criada localmente a partir desses seis JSONs do Discover **não é o CSV original do Reporting**, e sua origem foi documentada como tal.
+
+O comparador offline do próprio projeto retornou **6/6** eventos iguais para cinco regras, com código 0. A confirmação da origem foi feita durante a operação remota do GUI, e não inferida do conteúdo do CSV projetado. A procedência e o escopo estão no [relatório público de aceite](phase3-final-three-stage-six-event-acceptance-20261102.md). Evite publicar os JSONs originais ou o CSV privado; não gere timestamps artificialmente a partir da fonte Manager ou Indexer.
