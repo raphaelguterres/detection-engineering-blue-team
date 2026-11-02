@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import re
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -17,12 +18,41 @@ MAX_SOURCE_BYTES = 128 * 1024 * 1024
 
 
 def parse_utc(value: str) -> datetime:
+    """Parse Wazuh timestamps on Python 3.8+ as well as modern Python.
+
+    Wazuh commonly uses compact UTC offsets (+0000 / -0800). The behavior of
+    datetime.fromisoformat for compact offsets varies by Python version.
+    strptime(%z) supports those offsets reliably and rejects naive timestamps.
+    """
     if not isinstance(value, str):
         raise ValueError("timestamp missing")
+    normalized = value[:-1] + "+0000" if value.endswith("Z") else value
+    for pattern in ("%Y-%m-%dT%H:%M:%S.%f%z",
+                    "%Y-%m-%dT%H:%M:%S%z"):
+        try:
+            stamp = datetime.strptime(normalized, pattern)
+            return stamp.astimezone(timezone.utc)
+        except ValueError:
+            continue
     stamp = datetime.fromisoformat(value.replace("Z", "+00:00"))
     if stamp.tzinfo is None:
         raise ValueError("timestamp missing offset")
     return stamp.astimezone(timezone.utc)
+
+
+def timestamp_shape(value) -> str:
+    """Classify a failing timestamp without revealing any original value."""
+    if value is None:
+        return "missing"
+    if not isinstance(value, str):
+        return "non_string"
+    if re.search(r"[+-][0-9]{4}$", value):
+        return "compact_timezone_offset"
+    if re.search(r"[+-][0-9]{2}:[0-9]{2}$", value):
+        return "colon_timezone_offset"
+    if value.endswith("Z"):
+        return "utc_z"
+    return "other"
 
 
 def audit_file(path: Path, start: datetime, end: datetime) -> dict:
@@ -39,6 +69,7 @@ def audit_file(path: Path, start: datetime, end: datetime) -> dict:
     all_ids = Counter()
     no_window = Counter()
     in_window = Counter()
+    bad_timestamp_shapes = Counter()
     first = {}
     last = {}
     opener = gzip.open if path.suffix == ".gz" else open
@@ -63,12 +94,14 @@ def audit_file(path: Path, start: datetime, end: datetime) -> dict:
             try:
                 stamp = parse_utc(event.get("timestamp"))
             except (ValueError, TypeError, OverflowError):
+                bad_timestamp_shapes[timestamp_shape(event.get("timestamp"))] += 1
                 result["missing_or_invalid_timestamp_for_target_rule"] += 1
                 continue
             first[rid] = min(first.get(rid, stamp), stamp)
             last[rid] = max(last.get(rid, stamp), stamp)
             if start <= stamp <= end:
                 in_window[rid] += 1
+    result["invalid_timestamp_shapes"] = dict(sorted(bad_timestamp_shapes.items()))
     result["most_frequent_rule_ids"] = dict(all_ids.most_common(8))
     result["custom_rules_without_time_filter"] = {rid: no_window[rid] for rid in RULES}
     result["custom_rules_in_window"] = {rid: in_window[rid] for rid in RULES}
