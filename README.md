@@ -34,9 +34,10 @@ Cada regra possui metadados, fixtures de regressão, hipótese de detecção, fa
 | Cinco regras versionadas e quality gate | **Concluído** |
 | Regressões em árvore isolada do Wazuh 4.14.9 | **12/12 aprovadas** |
 | Cinco IDs de regras observados no Indexer/Dashboard | **5/5 regras; seis alertas documentados** |
-| Correspondência independente do **mesmo evento** em Manager → Indexer → Dashboard | **Pendente** |
+| Identidade exata Manager → Indexer (seis alertas, cinco regras) | **6/6 correlacionados — concluído** |
+| Identidade dos mesmos alertas na interface Dashboard Discover | **Pendente — aceite final** |
 
-Os [seis alertas observados no Discover](docs/phase3-five-rule-dashboard-evidence-20261102.md) são evidência de indexação e visualização; não são prova, por si só, de correlação ponta a ponta. Uma auditoria dos arquivos rotacionados do **Manager confirmou os seis alertas originais das cinco regras** (cinco em 01/11 e um em 02/11), **todos dentro da janela UTC 01/11 20h–02/11 00h40**. Após a [correção do parser](docs/phase3-manager-archive-audit.md), os seis timestamps coincidem até os milissegundos com as observações registradas no Discover. Ainda falta comparar independentemente os **mesmos IDs completos** entre Manager, Indexer e Dashboard.
+Os [seis alertas observados no Discover](docs/phase3-five-rule-dashboard-evidence-20261102.md) são evidência de indexação e visualização; não são prova, por si só, de correlação ponta a ponta. Uma auditoria dos arquivos rotacionados do **Manager confirmou os seis alertas originais das cinco regras** (cinco em 01/11 e um em 02/11), **todos dentro da janela UTC 01/11 20h–02/11 00h40**. Após a [correção do parser](docs/phase3-manager-archive-audit.md), os seis timestamps coincidem até os milissegundos com as observações registradas no Discover. A [comparação independente concluída](docs/phase3-manager-indexer-exact-correlation-20261102.md) confirmou **6/6 identidades exatas** entre Manager e Indexer (`id`, regra, agente e instante UTC). Falta somente a conferência separada desses mesmos documentos na interface **Discover** do Dashboard.
 
 A conclusão operacional é acompanhada na [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) e no [STATUS.md](STATUS.md). Também existe uma [lacuna histórica de indexação de 27–30/10](docs/phase3-indexing-gap-investigation.md), com causa raiz ainda não comprovada.
 
