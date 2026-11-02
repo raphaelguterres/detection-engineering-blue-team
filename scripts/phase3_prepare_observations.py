@@ -10,7 +10,7 @@ import json
 import os
 from pathlib import Path
 
-from phase3_compare_alert_exports import PRIVATE_DIR, RULE_IDS
+from phase3_compare_alert_exports import PRIVATE_DIR, RULE_IDS, private_root_is_link
 
 MAX_SUMMARY_BYTES = 1024 * 1024
 MAX_COUNT = 250_000
@@ -53,7 +53,7 @@ def build_observations(summary):
 
 def private_path(path):
     """Resolve paths and reject anything outside the private .lab/ tree."""
-    if PRIVATE_DIR.is_symlink() or PRIVATE_DIR.is_junction():
+    if private_root_is_link(PRIVATE_DIR):
         raise ValueError(".lab/ must be a real directory, not a symlink or junction")
     root = PRIVATE_DIR.resolve()
     candidate = Path(path).resolve()

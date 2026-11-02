@@ -111,7 +111,8 @@ class ObservationDraftTests(unittest.TestCase):
             )
             if created.returncode:
                 self.skipTest("junction creation not permitted by runner")
-            self.assertTrue(redirect.is_junction())
+            import stat
+            self.assertTrue(redirect.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
             with patch.object(draft, "PRIVATE_DIR", redirect):
                 with self.assertRaisesRegex(ValueError, "symlink"):
                     draft.private_path(redirect / "observations.json")
