@@ -36,6 +36,7 @@ def audit_file(path: Path, start: datetime, end: datetime) -> dict:
         "invalid_json_or_object": 0,
         "missing_or_invalid_timestamp_for_target_rule": 0,
     }
+    all_ids = Counter()
     no_window = Counter()
     in_window = Counter()
     first = {}
@@ -54,6 +55,8 @@ def audit_file(path: Path, start: datetime, end: datetime) -> dict:
             result["valid_json_objects"] += 1
             rule = event.get("rule")
             rid = str(rule.get("id", "")) if isinstance(rule, dict) else ""
+            if rid:
+                all_ids[rid] += 1
             if rid not in RULES:
                 continue
             no_window[rid] += 1
@@ -66,6 +69,7 @@ def audit_file(path: Path, start: datetime, end: datetime) -> dict:
             last[rid] = max(last.get(rid, stamp), stamp)
             if start <= stamp <= end:
                 in_window[rid] += 1
+    result["most_frequent_rule_ids"] = dict(all_ids.most_common(8))
     result["custom_rules_without_time_filter"] = {rid: no_window[rid] for rid in RULES}
     result["custom_rules_in_window"] = {rid: in_window[rid] for rid in RULES}
     result["time_bounds_utc"] = {
