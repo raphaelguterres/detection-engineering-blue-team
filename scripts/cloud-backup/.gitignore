@@ -1,0 +1,12 @@
+# Keep host-specific configuration, secrets, and VM binaries out of Git.
+lab.local.json
+*.env
+*.key
+*.password
+*.credential
+*.ova
+*.ovf
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx

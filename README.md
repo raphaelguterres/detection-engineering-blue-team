@@ -41,6 +41,15 @@ Uma auditoria dos arquivos rotacionados do **Manager** confirmou os seis alertas
 
 O aceite da Fase 3 está registrado na [Issue #4](https://github.com/raphaelguterres/detection-engineering-blue-team/issues/4) e no [STATUS.md](STATUS.md). A [lacuna histórica de indexação de 27–30/10](docs/phase3-indexing-gap-investigation.md) permanece uma investigação **separada**, sem causa raiz comprovada.
 
+## Backup versionado e distribuicao do laboratorio
+
+O GitHub e o ponto de entrada do projeto: codigo de deteccao, testes, documentacao e manifests de releases. Backups privados de VMs ficam **fora do Git**, criptografados e com snapshots incrementais no armazenamento em nuvem. Imagens publicas so serao distribuidas depois de saneamento, revisao de licencas e teste de restauracao.
+
+- [Plano e procedimento de backup versionado](docs/versioned-cloud-backup.md)
+- [Script seguro de backup Restic](scripts/cloud-backup/Backup-Lab.ps1) e [restauracao isolada](scripts/cloud-backup/Restore-Lab.ps1)
+
+**Situacao:** preparacao concluida na branch de revisao; nenhum bucket foi provisionado e nenhum backup esta disponivel para download. As VMs atuais permanecem privadas.
+
 ## Como validar localmente (sem acessar as VMs)
 
 Requisitos: **Python 3.11+** e PowerShell para o fluxo opcional de evidências.

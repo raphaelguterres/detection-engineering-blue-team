@@ -1,0 +1,9 @@
+{
+  "_notice": "Copy to lab.local.json, set real host paths, and keep lab.local.json PRIVATE. Do not commit secrets or raw VM images.",
+  "vmFolders": [
+    "C:\\VMs\\Kali",
+    "C:\\VMs\\WindowsServer",
+    "C:\\VMs\\WIN10-CLIENT"
+  ],
+  "additionalFolders": []
+}
